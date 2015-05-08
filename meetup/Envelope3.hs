@@ -7,9 +7,13 @@ d1, d2 :: Diagram B
 d1 = circle 1
 d2 = (pentagon 1 === roundedRect 1.5 0.7 0.3)
 
+s1,s2 :: Diagram B
+s1 = square 1
+s2 = square 1 # alignT
+
 diagram = hsep 1
-  [ (d1 ||| d2)          # showEnvelope' (with & ePoints .~ 360) # showOrigin
-  , (d1 ||| d2) # center # showEnvelope' (with & ePoints .~ 360) # showOrigin
+  [ s1 # showEnvelope' (with & ePoints .~ 360) # showOrigin
+  , centerY $ s2 # showEnvelope' (with & ePoints .~ 360) # showOrigin
   ]
 
 main = mainWith $ frame 0.1 diagram

@@ -1,4 +1,4 @@
-<html><head><meta charset="utf-8"><title>Diagrams 1.3</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="css/reveal.css" rel="stylesheet"><link href="css/theme/white.css" id="theme" rel="stylesheet"><link href="lib/css/github.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section><section><h2>diagrams</h2><h3>Declarative domain-specific language for creating vector graphics</h3><ul><li><a href="http://projects.haskell.org/diagrams/">http://projects.haskell.org/diagrams/</a></li><li> diagrams-core</li><li>diagrams-lib</li><li>diagrams-svg, diagrams-rasterific, ...</li><li>cabal update &amp;&amp; cabal install diagrams</li></ul><aside class="notes"><ul><li>How many here have used diagrams?</li><li>website has tutorials, manual, gallery, blog, reference</li></ul></aside></section><section><h2>5 Active Developers</h2><h3>67 Contributors</h3><ul><li>Chris Chalmers</li><li>Daniel Bergey</li><li>Jeffrey Rosenbluth</li><li>Ryan Yates</li><li>Brent Yorgey</li></ul><aside class="notes"><ul><li>The diagrams team</li><li>see blog post contributors list</li></ul></aside></section></section><section><section><h2>Diagrams 1.3 released</h2><h3>Projections</h3><img width="500" src="./meetup/table5.gif"></section><section><h2>Diagrams 1.3</h2><h3>Path Intersections</h3><img width="600" src="./meetup/intersections.png"></section><section><h2>Diagrams 1.3</h2><h3>Grouping for Opacity</h3><img width="600" src="./meetup/group-opacity.png"></section><section><h2>Diagrams 1.3</h2><h3>New Backends</h3><ul><li>diagrams-pgf</li><li>diagrams-canvas</li><li>diagrams-hmlt5</li></ul></section></section><section><h2>A Diagram</h2><img width="300" src="./meetup/firstDiagram.svg"><pre><code data-trim="contenteditable" class="haskell">{-# LANGUAGE NoMonomorphismRestriction #-}
+<html><head><meta charset="utf-8"><title>Diagrams 1.3</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="css/reveal.css" rel="stylesheet"><link href="css/theme/white.css" id="theme" rel="stylesheet"><link href="lib/css/github.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section><section><h2>diagrams</h2><h3>Declarative domain-specific language for creating vector graphics</h3><ul><li><a href="http://projects.haskell.org/diagrams/">http://projects.haskell.org/diagrams/</a></li><li> diagrams-core</li><li>diagrams-lib</li><li>diagrams-svg, diagrams-rasterific, ...</li><li>cabal update &amp;&amp; cabal install diagrams</li></ul><aside class="notes"><ul><li>How many here have used diagrams?</li><li>website has tutorials, manual, gallery, blog, reference</li></ul></aside></section><section><h2>5 Active Developers</h2><h3>67 Contributors</h3><ul><li>Chris Chalmers</li><li>Daniel Bergey</li><li>Jeffrey Rosenbluth</li><li>Ryan Yates</li><li>Brent Yorgey</li></ul><aside class="notes"><ul><li>The diagrams team</li><li>see blog post contributors list</li></ul></aside></section></section><section><section><h2>Diagrams 1.3 released</h2><h3>Projections</h3><img width="500" src="./meetup/table5.gif"><aside class="notes"><ul><li>plus lots more</li></ul></aside></section><section><h2>Diagrams 1.3</h2><h3>Path Intersections</h3><img width="600" src="./meetup/intersections.png"></section><section><h2>Diagrams 1.3</h2><h3>Grouping for Opacity</h3><img width="600" src="./meetup/group-opacity.png"></section><section><h2>Diagrams 1.3</h2><h3>New Backends</h3><ul><li>diagrams-pgf</li><li>diagrams-canvas</li><li>diagrams-hmlt5</li></ul></section></section><section><h2>A Diagram</h2><img width="300" src="./meetup/firstDiagram.svg"><pre><code data-trim="contenteditable" class="haskell">{-# LANGUAGE NoMonomorphismRestriction #-}
 
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
@@ -7,27 +7,27 @@ diagram :: Diagram B
 diagram = circle 1 # lw ultraThick # lc purple # fc orange
 
 main = mainWith $ frame 0.1 diagram
-</code></pre><aside class="notes"><ul><li>installation</li></ul></aside></section><section><section><h2>Composing Diagrams</h2><h3>atop</h3><img width="300" src="./meetup/atop.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+</code></pre><aside class="notes"><ul><li>no NoMonoMorphismRestriction important to avoid crazy error messages</li><li>import a backend, plugable</li><li>Diagram B - a type alias for 2d diagrams</li><li>mainWith vs defaultMain</li><li>not going to show mainWith from here in</li></ul></aside></section><section><section><h2>Composing Diagrams</h2><h3>atop</h3><img width="300" src="./meetup/atop.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
 c2 = circle 1   # fc orange
 
 diagram :: Diagram B
 diagram = c1 `atop` c2
-</code></pre></section><section><h2>Composing Diagrams</h2><h3>Side by Side</h3><img width="400" src="./meetup/atop2.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+</code></pre><aside class="notes"><ul><li>default line color is black</li><li>defalut fill color is transparent</li><li>diagrams are monoids</li><li>atop == &lt;&gt;</li></ul></aside></section><section><h2>Composing Diagrams</h2><h3>Side by Side</h3><img width="400" src="./meetup/atop2.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
 c2 = circle 1   # fc orange
 
 diagram :: Diagram B
 diagram = c1 ||| c2
-</code></pre></section><section><h2>Composing Diagrams</h2><h3>Local Origins</h3><img width="400" src="./meetup/atop3.svg"></section><section><h2>Composing Diagrams</h2><h3>with atop</h3><img width="300" src="./meetup/atop4.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+</code></pre></section><section><h2>Composing Diagrams</h2><h3>Every diagram has a local origin</h3><img width="400" src="./meetup/atop3.svg"><aside class="notes"><ul><li>You can think of it as the point (0,0) on global grid</li></ul></aside></section><section><h2>Composing Diagrams</h2><h3>with atop</h3><img width="300" src="./meetup/atop4.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
 c2 = circle 1   # fc orange
 
 diagram :: Diagram B
 diagram = (c1 `atop` c2) # showOrigin
-</code></pre></section><section><h2>Side by Side -- |||</h2><h3>Move origin + atop</h3><img width="400" src="./meetup/atop5.svg"></section><section><h2>Composing Diagrams</h2><h3>with beside</h3><img width="300" src="./meetup/atop6.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+</code></pre><aside class="notes"><ul><li>Places all local origings at (0,0)</li></ul></aside></section><section><h2>Side by Side -- |||</h2><h3>moveOriginTo + atop</h3><img width="400" src="./meetup/atop5.svg"></section><section><h2>Composing Diagrams</h2><h3>with beside</h3><img width="300" src="./meetup/atop6.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
 c2 = circle 1   # fc orange
 
 diagram :: Diagram B
 diagram = beside (1 ^&amp; 1) c1 c2 # showOrigin
-</code></pre></section><section><h2>Compostion</h2><h4>Defined in terms of atop and moveOriginTo</h4><ul><li>besde, |||, ===</li><li>cat, hcat, vcat, hsep, vsep</li><li>juxtapose</li><li>position</li><li>appends</li></ul></section></section><section><section><h4>How do we know where to place diagrams when composing so that they don&#39;t overlap?</h4><ul><li><del>Bounding Boxes</del></li><li>Envelopes</li></ul></section><section><h2>Bounding Boxes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/boundingbox.svg"></section><section><h2>Envelopes</h2><img width="500" src="./meetup/envelope.svg"></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope2.svg"></section><section><h2>Envelopes</h2><h3>Depend on the local origin</h3><img width="500" src="./meetup/envelope3.svg"><p><a href="https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/">https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf</a></p></section><section><h2>Align</h2><img width="400" src="./meetup/align.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
+</code></pre><aside class="notes"><ul><li>||| == beside (1,0)</li></ul></aside></section><section><h2>Moral</h2><h4>All defined in terms of atop and moveOriginTo</h4><ul><li>besde, |||, ===</li><li>cat, hcat, vcat, hsep, vsep</li><li>juxtapose</li><li>position</li><li>appends</li></ul></section></section><section><section><h4>How do we know where to place diagrams when composing so that they don&#39;t overlap?</h4><ul><li><del>Bounding Boxes</del></li><li>Envelopes</li></ul></section><section><h2>Bounding Boxes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/boundingbox.svg"><aside class="notes"><ul><li>not compositional</li><li>not general</li><li>what to do with bounding box under rotation</li><li>bounding paths are complicated</li></ul></aside></section><section><h2>Envelopes</h2><img width="500" src="./meetup/envelope.svg"><aside class="notes"><ul><li>how far to supporting hyperplane</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope2.svg"><aside class="notes"><ul><li>Now we see the connection between envelopes and atop</li></ul></aside></section><section><h2>Envelopes</h2><h3>Depend on the local origin</h3><ul><li>not always intuitive</li><li>not the same as the convex hull</li></ul><img width="500" src="./meetup/envelope3.svg"><p><a href="https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/">https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf</a></p></section><section><h2>Align</h2><h3>Moves the local origin to the envelope</h3><img width="400" src="./meetup/align.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
 
 sOrigin = showOrigin&#39; (with &amp; oScale .~ 0.04)
 
@@ -35,7 +35,7 @@ diagram :: Diagram B
 diagram = h # alignR  # sOrigin
       ||| h # alignBL # sOrigin
       ||| h # alignTL # sOrigin
-</code></pre></section><section><h2>Trace</h2><img width="600" src="./meetup/trace.svg"></section><section><h2>Snug</h2><img width="300" src="./meetup/snug.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
+</code></pre><aside class="notes"><ul><li>primed versions like showOrigin&#39; take an default record</li><li>see section 2.2 of manual, faking optional named arguments</li><li>with is a pun == def, lenses</li></ul></aside></section><section><h2>Trace</h2><img width="600" src="./meetup/trace.svg"></section><section><h2>Snug</h2><img width="300" src="./meetup/snug.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
 
 sOrigin = showOrigin&#39; (with &amp; oScale .~ 0.04)
 
@@ -44,7 +44,7 @@ diagram = h # alignR # sOrigin
       -- why not snugBL ?
       `atop` h # snugB # snugL # sOrigin
       `atop` h # snugT # snugL # sOrigin
-</code></pre></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
+</code></pre><aside class="notes"><ul><li>This cannot be done using align since envelopes prevent overlap</li><li>same align but uses trace instead of envelope</li></ul></aside></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"><aside class="notes"><ul><li>reflcected isoceles triangles, 2n-gons</li><li>8-gon, 360 / 8 = 45 degree central anlge</li><li>random confetti in chamber</li></ul></aside></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
 import           Control.Monad.Random
 import           Data.Colour.Palette.ColorSet
 import           Data.List                     (zipWith, zipWith3)
@@ -57,7 +57,7 @@ sizeValue = getRandomR (0.05, 0.25)
 
 coordValue :: (RandomGen g) =&gt; Rand g Double
 coordValue = getRandomR (-0.5, 0.5)
-</code></pre></section><section><h2>The Confetti</h2><pre><code data-trim="contenteditable" class="haskell">confetti :: Int -&gt; Rand StdGen (Diagram B)
+</code></pre><aside class="notes"><ul><li>palette</li><li>MonadRandom: Rand g, evalRand</li></ul></aside></section><section><h2>The Confetti</h2><pre><code data-trim="contenteditable" class="haskell">confetti :: Int -&gt; Rand StdGen (Diagram B)
 confetti n = do
   ss &lt;- replicateM n sizeValue   -- radius
   cs &lt;- replicateM n getRandom   -- color index
@@ -70,7 +70,7 @@ confetti n = do
       pos  = zipWith mkP2 xs ys
       conf = zipWith3 mkCirc ss cs as
   return $ position (zip pos conf)
-</code></pre></section><section><h2>The Confetti</h2><h3>50 Pieces, Seed = 0</h3><img width="400" src="./meetup/mirror.svg"></section><section><h2>Clip to a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
+</code></pre></section><section><h2>Generating The Confetti</h2><h3>50 Pieces, Seed = 0</h3><img width="400" src="./meetup/mirror.svg"></section><section><h2>Clip to a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
 isoceles n = polygon
   (def &amp; polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
        &amp; polyOrient .~ OrientH )
@@ -95,14 +95,14 @@ kaleidoscope d n = mconcat . take n $ iterateIdx next tri
     next t = reflectAbout
              (0 ^&amp; 0)
              (rotateBy (-fromIntegral t / fromIntegral n) xDir)
-</code></pre></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror4.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Backgound</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
+</code></pre></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror4.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li><li>collaboration with juicy pixels</li><li>cairo, rasterific</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Backgound</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
 stripes = (strutX 32
       ||| stripe
       ||| strutX 32
       ||| stripe
       ||| strutX 30) # center
   where stripe = square 100 # scaleX 0.03 # fc white # lc white
-</code></pre></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
+</code></pre><aside class="notes"><ul><li> GIFs have no alpha</li><li>dont need the black square</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
 radial = mkRadialGradient (mkStops [(white,0,1), (black,1,1)])
                           ((-0.25) ^&amp; (0.25)) 0.1 (0 ^&amp; 0) 1.5
                           GradPad

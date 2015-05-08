@@ -42,7 +42,7 @@ mkTraceDia :: TraceDiaOpts -> Diagram B
 mkTraceDia tdo = mconcat
   [ mconcat $ map (place (dot' # fc red)) pts
   , if drawV tdo then resultArrow else mempty
-  , arrowAt (basePt tdo) (dirV tdo) # lc blue
+  -- , arrowAt (basePt tdo) (dirV tdo) # lc blue
   , dot' # fc blue # moveTo (basePt tdo)
   , traceLine (basePt tdo) maxPosPt
   , traceLine (basePt tdo) minNegPt
@@ -76,4 +76,4 @@ mkTraceDias = hcat' (with & sep .~ 1) . map mkTraceDia
 mkTraceDiasABC :: TraceDiaOpts -> Diagram B
 mkTraceDiasABC tdo = mkTraceDias (map (\p -> tdo { basePt = p }) [pointA, pointB, pointC])
 
-main = mainWith $ mkTraceDiasABC def { drawV = True, sFilter = dropAllBut1 . filter (>0) } # frame 0.1
+main = mainWith $ mkTraceDiasABC def { drawV = True, sFilter = take 1 . filter (> 0) } # frame 0.1

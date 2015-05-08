@@ -156,10 +156,11 @@ slideShow = do
       ["Chris Chalmers", "Daniel Bergey", "Jeffrey Rosenbluth", "Ryan Yates", "Brent Yorgey"]
       ["The diagrams team", "see blog post contributors list"]
   slide $ do
-    slideImage
+    slideImage'
       "Diagrams 1.3 released"
       (Just "Projections")
       "table5.gif" 500
+      ["plus lots more"]
     slideImage
       "Diagrams 1.3"
       (Just "Path Intersections")
@@ -180,39 +181,50 @@ slideShow = do
     Nothing
     "firstDiagram.svg" 300
     "firstDiagram.hs" 1 100
-    ["installation"]
+    [ "no NoMonoMorphismRestriction important to avoid crazy error messages"
+    , "import a backend, plugable"
+    , "Diagram B - a type alias for 2d diagrams"
+    , "mainWith vs defaultMain"
+    , "not going to show mainWith from here in" ]
   slide $ do
-    slideImageCode
+    slideImageCode'
       "Composing Diagrams"
       (Just "atop")
       "atop.svg" 300
       "atop.hs" 6 10
+      [ "default line color is black"
+      , "defalut fill color is transparent"
+      , "diagrams are monoids"
+      , "atop == <>"]
     slideImageCode
       "Composing Diagrams"
       (Just "Side by Side")
       "atop2.svg" 400
       "atop2.hs" 6 10
-    slideImage
+    slideImage'
       "Composing Diagrams"
-      (Just "Local Origins")
+      (Just "Every diagram has a local origin")
       "atop3.svg" 400
-    slideImageCode
+      [ "You can think of it as the point (0,0) on global grid"]
+    slideImageCode'
       "Composing Diagrams"
       (Just "with atop")
       "atop4.svg" 300
       "atop4.hs" 6 10
+      [ "Places all local origings at (0,0)"]
     slideImage
       "Side by Side -- |||"
-      (Just "Move origin + atop")
+      (Just "moveOriginTo + atop")
       "atop5.svg" 400
-    slideImageCode
+    slideImageCode'
       "Composing Diagrams"
       (Just "with beside")
       "atop6.svg" 300
       "atop6.hs" 6 10
+      [ "||| == beside (1,0)" ]
     slide $ do
-       h2_ "Compostion"
-       h4_ "Defined in terms of atop and moveOriginTo"
+       h2_ "Moral"
+       h4_ "All defined in terms of atop and moveOriginTo"
        ul_ $ do
          li_ "besde, |||, ==="
          li_ "cat, hcat, vcat, hsep, vsep"
@@ -226,54 +238,73 @@ slideShow = do
       ul_ $ do
         li_ (del_ "Bounding Boxes")
         li_ "Envelopes"
-    slideImage
+    slideImage'
       "Bounding Boxes"
       (Just "beside (1, 1)")
       "boundingbox.svg" 400
-    slideImage
+      [ "not compositional"
+      , "not general"
+      , "what to do with bounding box under rotation"
+      , "bounding paths are complicated"]
+    slideImage'
       "Envelopes"
       Nothing
       "envelope.svg" 500
-    slideImage
+      ["how far to supporting hyperplane"]
+    slideImage'
       "Envelopes"
       (Just "beside (1, 1)")
       "envelope2.svg" 400
+      [ "Now we see the connection between envelopes and atop"]
     slide $ do
       h2_ "Envelopes"
       h3_ "Depend on the local origin"
+      ul_ $ do
+        li_ "not always intuitive"
+        li_ "not the same as the convex hull"
       img_ [src_ $ pack (path "envelope3.svg") , width_ "500"]
       p_ $
         a_ [href_ "https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/"]
            "https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf"
-    slideImageCode
+    slideImageCode'
       "Align"
-      Nothing
+      (Just "Moves the local origin to the envelope")
       "align.svg" 400
       "Align.hs" 6 13
+      [ "primed versions like showOrigin' take an default record"
+      , "see section 2.2 of manual, faking optional named arguments"
+      , "with is a pun == def, lenses"]
     slideImage
       "Trace"
       Nothing
       "trace.svg" 600
-    slideImageCode
+    slideImageCode'
       "Snug"
       Nothing
       "snug.svg" 300
       "Snug.hs" 6 14
+      [ "This cannot be done using align since envelopes prevent overlap"
+      , "same align but uses trace instead of envelope"]
   slide $ do
-    slideImage
+    slideImage'
       "A 2 Mirror Kaleidoscope"
       Nothing
       "kaleidoscope_by_mandelfish.jpg" 500
-    slideCode
+      [ "reflcected isoceles triangles, 2n-gons"
+      , "8-gon, 360 / 8 = 45 degree central anlge"
+      , "random confetti in chamber"]
+    slideCode'
       "Preliminaries"
       Nothing
       "Mirror.hs" 5 17
+      [ "palette"
+      , "MonadRandom: Rand g, evalRand"]
     slideCode
       "The Confetti"
       Nothing
       "Mirror.hs" 19 31
     slideImage
-      "The Confetti"
+      "Generating The Confetti"
       (Just "50 Pieces, Seed = 0")
       "mirror.svg" 400
     slideCode
@@ -301,12 +332,16 @@ slideShow = do
       "Making GIFs with diagrams"
       Nothing
       "pendulum.gif" 400
-      ["creating 3d GIFs by adding 2 lines"]
-    slideImageCode
+      [ "creating 3d GIFs by adding 2 lines"
+      , "collaboration with juicy pixels"
+      , "cairo, rasterific"]
+    slideImageCode'
       "Pendulum"
       (Just "The Backgound")
       "stripes.svg" 300
       "Pendulum.hs" 27 33
+      [" GIFs have no alpha"
+      , "dont need the black square"]
     slideImageCode
       "Pendulum"
       (Just "The Ball")
