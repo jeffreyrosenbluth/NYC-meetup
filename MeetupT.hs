@@ -24,6 +24,11 @@ datamarkdown_ = makeAttribute "data-markdown" mempty
 slide :: HtmlIO -> HtmlIO
 slide = section_
 
+slide' :: HtmlIO -> [HtmlIO] -> HtmlIO
+slide' content notes = section_ (content <> aside_ [class_ "notes"] ns)
+  where
+    ns = ul_ (mapM_ li_ notes)
+
 code :: HtmlIO -> HtmlIO
 code source = pre_ $ code_ [class_"haskell", datatrim_ "contenteditable"] source
 
@@ -38,6 +43,14 @@ slideImage title subtitle imageUrl size = do
     maybe "" h3_ subtitle
     img_ [src_ $ pack (path imageUrl) , width_ (pack . show $ size)]
 
+slideImage' :: HtmlIO -> Maybe HtmlIO -> String -> Int -> [HtmlIO] -> HtmlIO
+slideImage' title subtitle imageUrl size notes = do
+  slide' (do
+    h2_ title
+    maybe "" h3_ subtitle
+    img_ [src_ $ pack (path imageUrl) , width_ (pack . show $ size)])
+    notes
+
 slideCode :: HtmlIO -> Maybe HtmlIO -> FilePath -> Int -> Int -> HtmlIO
 slideCode title subtitle codeFile a b = do
   hs <- liftIO $ getCode (path codeFile) a b
@@ -46,7 +59,17 @@ slideCode title subtitle codeFile a b = do
     maybe "" h3_ subtitle
     code $ toHtml hs
 
-slideImageCode :: HtmlIO -> Maybe HtmlIO -> FilePath -> Int -> FilePath -> Int -> Int -> HtmlIO
+slideCode' :: HtmlIO -> Maybe HtmlIO -> FilePath -> Int -> Int -> [HtmlIO] -> HtmlIO
+slideCode' title subtitle codeFile a b notes = do
+  hs <- liftIO $ getCode (path codeFile) a b
+  slide' (do
+    h2_ title
+    maybe "" h3_ subtitle
+    code $ toHtml hs)
+    notes
+
+slideImageCode :: HtmlIO -> Maybe HtmlIO -> FilePath -> Int
+               -> FilePath -> Int -> Int -> HtmlIO
 slideImageCode title subtitle imageUrl size codeFile a b = do
   hs <- liftIO $ getCode (path codeFile) a b
   slide $ do
@@ -55,12 +78,24 @@ slideImageCode title subtitle imageUrl size codeFile a b = do
     img_ [src_ $ pack (path imageUrl) , width_ (pack. show $ size)]
     code $ toHtml hs
 
-slideBullets :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> HtmlIO
-slideBullets title subtitle bullets =
-  slide $ do
+slideImageCode' :: HtmlIO -> Maybe HtmlIO -> FilePath -> Int
+                -> FilePath -> Int -> Int -> [HtmlIO] -> HtmlIO
+slideImageCode' title subtitle imageUrl size codeFile a b notes = do
+  hs <- liftIO $ getCode (path codeFile) a b
+  slide' (do
     h2_ title
     maybe "" h3_ subtitle
-    ul_ (mapM_ li_ bullets)
+    img_ [src_ $ pack (path imageUrl) , width_ (pack. show $ size)]
+    code $ toHtml hs)
+    notes
+
+slideBullets' :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> [HtmlIO] -> HtmlIO
+slideBullets' title subtitle bullets notes =
+  slide' (do
+    h2_ title
+    maybe "" h3_ subtitle
+    ul_ (mapM_ li_ bullets))
+    notes
 
 slideMarkdown :: Text -> HtmlIO
 slideMarkdown s = section_ [datamarkdown_] $ script_ [type_"text/template"] s
@@ -104,13 +139,25 @@ bodyFooter = do
 slideShow :: HtmlIO
 slideShow = do
   slide $ do
-    h1_ "diagrams"
-    h3_ "Declarative domain-specific language for creating vector graphics"
-    a_ [href_ "http://projects.haskell.org/diagrams/"]
-       "http://projects.haskell.org/diagrams/"
+    slideBullets'
+      "diagrams"
+      (Just "Declarative domain-specific language for creating vector graphics")
+      [a_ [href_ "http://projects.haskell.org/diagrams/"]
+         "http://projects.haskell.org/diagrams/"
+      ," diagrams-core"
+      , "diagrams-lib"
+      , "diagrams-svg, diagrams-rasterific, ..."
+      , "cabal update && cabal install diagrams"]
+      [ "How many here have used diagrams?"
+      , "website has tutorials, manual, gallery, blog, reference"]
+    slideBullets'
+      "5 Active Developers"
+      (Just "67 Contributors")
+      ["Chris Chalmers", "Daniel Bergey", "Jeffrey Rosenbluth", "Ryan Yates", "Brent Yorgey"]
+      ["The diagrams team", "see blog post contributors list"]
   slide $ do
     slideImage
-      "Diagrams 1.3 released!"
+      "Diagrams 1.3 released"
       (Just "Projections")
       "table5.gif" 500
     slideImage
@@ -126,12 +173,14 @@ slideShow = do
       h3_ "New Backends"
       ul_ $ do
         li_ "diagrams-pgf"
+        li_ "diagrams-canvas"
         li_ "diagrams-hmlt5"
-  slideImageCode
+  slideImageCode'
     "A Diagram"
     Nothing
     "firstDiagram.svg" 300
     "firstDiagram.hs" 1 100
+    ["installation"]
   slide $ do
     slideImageCode
       "Composing Diagrams"
@@ -248,10 +297,11 @@ slideShow = do
       (Just "36 degrees, 10 triangles")
       "mirror4.svg" 400
   slide $ do
-    slideImage
+    slideImage'
       "Making GIFs with diagrams"
       Nothing
       "pendulum.gif" 400
+      ["creating 3d GIFs by adding 2 lines"]
     slideImageCode
       "Pendulum"
       (Just "The Backgound")
