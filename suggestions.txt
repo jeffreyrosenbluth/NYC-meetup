@@ -1,0 +1,12 @@
+<cchalmers>	martingale: adjacent square showing a small gap where shouldn't be any
+[12:41:50:PM]  <martingale>	cchalmers ah yes, thanks
+[12:41:54:PM]  <cchalmers>	was discussed a little in
+  https://groups.google.com/forum/#!topic/diagrams-discuss/fLfPlpXEBiQ
+[01:12:35:PM]  <byorgey>	martingale: sounds like fun!  Other suggestions: you could include
+  fun bugs like how rays sometimes
+  pass right through a joint without registering an intersection
+[01:15:05:PM]  <byorgey>	martingale: another fun gotcha is how  ...
+  # ( rotate alpha <> translateX 2 )  and   ... # transform
+  ( rotation alpha <> translationX 2 )  give different results
+[01:17:00:PM]  <fryguybob>	Another:  (t # translate v) # strokeT  vs
+  (t # strokeT) # translate v  can be surprising especially when TrailLike is involved

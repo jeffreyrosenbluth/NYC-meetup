@@ -1,0 +1,136 @@
+<html><head><meta charset="utf-8"><title>Diagrams 1.3</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="css/reveal.css" rel="stylesheet"><link href="css/theme/white.css" id="theme" rel="stylesheet"><link href="lib/css/github.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section><h1>diagrams</h1><h3>Declarative domain-specific language for creating vector graphics</h3><a href="http://projects.haskell.org/diagrams/">http://projects.haskell.org/diagrams/</a></section><section><section><h2>Diagrams 1.3 released!</h2><h3>Projections</h3><img width="500" src="./meetup/table5.gif"></section><section><h2>Diagrams 1.3</h2><h3>Path Intersections</h3><img width="600" src="./meetup/intersections.png"></section><section><h2>Diagrams 1.3</h2><h3>Grouping for Opacity</h3><img width="600" src="./meetup/group-opacity.png"></section><section><h2>Diagrams 1.3</h2><h3>New Backends</h3><ul><li>diagrams-pgf</li><li>diagrams-hmlt5</li></ul></section></section><section><h2>A Diagram</h2><img width="300" src="./meetup/firstDiagram.svg"><pre><code data-trim="contenteditable" class="haskell">{-# LANGUAGE NoMonomorphismRestriction #-}
+
+import Diagrams.Prelude
+import Diagrams.Backend.SVG.CmdLine
+
+diagram :: Diagram B
+diagram = circle 1 # lw ultraThick # lc purple # fc orange
+
+main = mainWith $ frame 0.1 diagram
+</code></pre></section><section><section><h2>Composing Diagrams</h2><h3>atop</h3><img width="300" src="./meetup/atop.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+c2 = circle 1   # fc orange
+
+diagram :: Diagram B
+diagram = c1 `atop` c2
+</code></pre></section><section><h2>Composing Diagrams</h2><h3>Side by Side</h3><img width="400" src="./meetup/atop2.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+c2 = circle 1   # fc orange
+
+diagram :: Diagram B
+diagram = c1 ||| c2
+</code></pre></section><section><h2>Composing Diagrams</h2><h3>Local Origins</h3><img width="400" src="./meetup/atop3.svg"></section><section><h2>Composing Diagrams</h2><h3>with atop</h3><img width="300" src="./meetup/atop4.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+c2 = circle 1   # fc orange
+
+diagram :: Diagram B
+diagram = (c1 `atop` c2) # showOrigin
+</code></pre></section><section><h2>Side by Side -- |||</h2><h3>Move origin + atop</h3><img width="400" src="./meetup/atop5.svg"></section><section><h2>Composing Diagrams</h2><h3>with beside</h3><img width="300" src="./meetup/atop6.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+c2 = circle 1   # fc orange
+
+diagram :: Diagram B
+diagram = beside (1 ^&amp; 1) c1 c2 # showOrigin
+</code></pre></section><section><h2>Compostion</h2><h4>Defined in terms of atop and moveOriginTo</h4><ul><li>besde, |||, ===</li><li>cat, hcat, vcat, hsep, vsep</li><li>juxtapose</li><li>position</li><li>appends</li></ul></section></section><section><section><h4>How do we know where to place diagrams when composing so that they don&#39;t overlap?</h4><ul><li><del>Bounding Boxes</del></li><li>Envelopes</li></ul></section><section><h2>Bounding Boxes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/boundingbox.svg"></section><section><h2>Envelopes</h2><img width="500" src="./meetup/envelope.svg"></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope2.svg"></section><section><h2>Envelopes</h2><h3>Depend on the local origin</h3><img width="500" src="./meetup/envelope3.svg"><p><a href="https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/">https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf</a></p></section><section><h2>Align</h2><img width="400" src="./meetup/align.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
+
+sOrigin = showOrigin&#39; (with &amp; oScale .~ 0.04)
+
+diagram :: Diagram B
+diagram = h # alignR  # sOrigin
+      ||| h # alignBL # sOrigin
+      ||| h # alignTL # sOrigin
+</code></pre></section><section><h2>Trace</h2><img width="600" src="./meetup/trace.svg"></section><section><h2>Snug</h2><img width="300" src="./meetup/snug.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
+
+sOrigin = showOrigin&#39; (with &amp; oScale .~ 0.04)
+
+diagram :: Diagram B
+diagram = h # alignR # sOrigin
+      -- why not snugBL ?
+      `atop` h # snugB # snugL # sOrigin
+      `atop` h # snugT # snugL # sOrigin
+</code></pre></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
+import           Control.Monad.Random
+import           Data.Colour.Palette.ColorSet
+import           Data.List                     (zipWith, zipWith3)
+import           Diagrams.Prelude
+import           Diagrams.Backend.SVG.CmdLine
+import           System.Random
+
+sizeValue :: (RandomGen g) =&gt; Rand g Double
+sizeValue = getRandomR (0.05, 0.25)
+
+coordValue :: (RandomGen g) =&gt; Rand g Double
+coordValue = getRandomR (-0.5, 0.5)
+</code></pre></section><section><h2>The Confetti</h2><pre><code data-trim="contenteditable" class="haskell">confetti :: Int -&gt; Rand StdGen (Diagram B)
+confetti n = do
+  ss &lt;- replicateM n sizeValue   -- radius
+  cs &lt;- replicateM n getRandom   -- color index
+  as &lt;- replicateM n getRandom   -- opacity
+  xs &lt;- replicateM n coordValue  -- x coordinate
+  ys &lt;- replicateM n coordValue  -- y coordinate
+  let mkCirc :: Double -&gt; Int -&gt; Double -&gt; Diagram B
+      mkCirc s c a = circle s # fc (webColors c)
+                              # opacity a # lw none
+      pos  = zipWith mkP2 xs ys
+      conf = zipWith3 mkCirc ss cs as
+  return $ position (zip pos conf)
+</code></pre></section><section><h2>The Confetti</h2><h3>50 Pieces, Seed = 0</h3><img width="400" src="./meetup/mirror.svg"></section><section><h2>Clip to a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
+isoceles n = polygon
+  (def &amp; polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
+       &amp; polyOrient .~ OrientH )
+  where
+  deg1 = 1/2 - (1 / fromIntegral n)
+  deg2 = 1/2 - 1/2 * deg1
+
+mkTriangle :: Int -&gt; Diagram B -&gt; Diagram B
+mkTriangle n = clipped tri # lw none
+  where
+  tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
+</code></pre></section><section><h2>The Triangle</h2><img width="400" src="./meetup/mirror2.svg"></section><section><h2>The Kaleidoscope</h2><pre><code data-trim="contenteditable" class="haskell">iterateIdx :: Integral i =&gt; (i -&gt; a -&gt; a) -&gt; a -&gt; [a]
+iterateIdx f t = go f t 0
+  where
+    go f t i = let t&#39; = f i t
+               in  t&#39;: go f t&#39; (i + 1)
+
+kaleidoscope :: Diagram B -&gt; Int -&gt; Diagram B
+kaleidoscope d n = mconcat . take n $ iterateIdx next tri
+  where
+    tri    = alignBR $ mkTriangle n d
+    next t = reflectAbout
+             (0 ^&amp; 0)
+             (rotateBy (-fromIntegral t / fromIntegral n) xDir)
+</code></pre></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror4.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"></section><section><h2>Pendulum</h2><h3>The Backgound</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
+stripes = (strutX 32
+      ||| stripe
+      ||| strutX 32
+      ||| stripe
+      ||| strutX 30) # center
+  where stripe = square 100 # scaleX 0.03 # fc white # lc white
+</code></pre></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
+radial = mkRadialGradient (mkStops [(white,0,1), (black,1,1)])
+                          ((-0.25) ^&amp; (0.25)) 0.1 (0 ^&amp; 0) 1.5
+                          GradPad
+</code></pre></section><section><h2>Pendulum</h2><pre><code data-trim="contenteditable" class="haskell">pend :: V2 Double -&gt; Diagram B
+pend v = bob # translate (e .-. origin) &lt;&gt; rope
+  where
+    ellipsePath :: Diagram B
+    ellipsePath = circle 25 # scaleX 1.5
+    bob = scale size $ circle 1 # fillTexture radial # lw none
+    size = 3.5 * sqrt (2 - y)
+    rope = arrowBetween&#39; (with &amp; shaftStyle %~ lw thick # lc gray
+                               &amp; arrowHead .~ noHead) s e
+    s = (0 ^&amp; 50)
+    e = fromMaybe origin (rayTraceP origin v ellipsePath)
+    (x, y) = unr2 v -- v ^. r2Iso
+</code></pre></section><section><h2>Pendulum</h2><h3>All together now</h3><pre><code data-trim="contenteditable" class="haskell">mkFrame :: V2 Double -&gt; Diagram B
+mkFrame v
+  | (snd $ unr2 v) &gt; 0 = stripes &lt;&gt; pend v
+  -- |  v ^. (r2Iso . _2) &gt; 0 ...
+  | otherwise = pend v &lt;&gt; stripes
+
+dias = map mkFrame vs
+  where vs = [fromDirection $ rotateBy(a/100) xDir | a &lt;- [0..99]]
+
+delays = take 100 (repeat 3)
+
+gif :: [(Diagram B, Int)]
+gif = zip dias delays
+
+main = mainWith $ gif
+</code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>Reveal.initialize({ controls: true, progress: true, history: true, center: true, transition: 'slide', dependencies: [ { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } }, { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } }, { src: 'plugin/zoom-js/zoom.js', async: true }, { src: 'plugin/notes/notes.js', async: true } ] });</script></body></html>
