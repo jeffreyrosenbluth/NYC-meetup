@@ -256,6 +256,11 @@ slideShow = do
       (Just "beside (1, 1)")
       "envelope2.svg" 400
       [ "Now we see the connection between envelopes and atop"]
+    slideImage'
+      "Envelopes"
+      (Just "beside (1.5, 1)")
+      "envelope4.svg" 400
+      [ "No chance of overlap"]
     slide $ do
       h2_ "Envelopes"
       h3_ "Depend on the local origin"
