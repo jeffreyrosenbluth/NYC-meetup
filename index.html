@@ -44,7 +44,7 @@ diagram = h # alignR # sOrigin
       -- why not snugBL ?
       `atop` h # snugB # snugL # sOrigin
       `atop` h # snugT # snugL # sOrigin
-</code></pre><aside class="notes"><ul><li>This cannot be done using align since envelopes prevent overlap</li><li>same align but uses trace instead of envelope</li></ul></aside></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"><aside class="notes"><ul><li>reflcected isoceles triangles, 2n-gons</li><li>8-gon, 360 / 8 = 45 degree central anlge</li><li>random confetti in chamber</li></ul></aside></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
+</code></pre><aside class="notes"><ul><li>This cannot be done using align since envelopes prevent overlap</li><li>same align but uses trace instead of envelope</li></ul></aside></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"><aside class="notes"><ul><li>reflected isoceles triangles, 2n-gons</li><li>8-gon, 360 / 8 = 45 degree central anlge</li><li>random confetti in chamber</li></ul></aside></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
 import           Control.Monad.Random
 import           Data.Colour.Palette.ColorSet
 import           Data.List                     (zipWith, zipWith3)
@@ -57,7 +57,7 @@ sizeValue = getRandomR (0.05, 0.25)
 
 coordValue :: (RandomGen g) =&gt; Rand g Double
 coordValue = getRandomR (-0.5, 0.5)
-</code></pre><aside class="notes"><ul><li>palette</li><li>MonadRandom: Rand g, evalRand</li></ul></aside></section><section><h2>The Confetti</h2><pre><code data-trim="contenteditable" class="haskell">confetti :: Int -&gt; Rand StdGen (Diagram B)
+</code></pre><aside class="notes"><ul><li>palette</li><li>MonadRandom: Rand g, evalRand</li><li>not restricted to a fixed set of confetti, like a real kaleidoscope</li></ul></aside></section><section><h2>Generating The Confetti</h2><pre><code data-trim="contenteditable" class="haskell">confetti :: Int -&gt; Rand StdGen (Diagram B)
 confetti n = do
   ss &lt;- replicateM n sizeValue   -- radius
   cs &lt;- replicateM n getRandom   -- color index
@@ -70,7 +70,7 @@ confetti n = do
       pos  = zipWith mkP2 xs ys
       conf = zipWith3 mkCirc ss cs as
   return $ position (zip pos conf)
-</code></pre></section><section><h2>Generating The Confetti</h2><h3>50 Pieces, Seed = 0</h3><img width="400" src="./meetup/mirror.svg"></section><section><h2>Clip to a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
+</code></pre><aside class="notes"><ul><li>position :: [(Point v n , a)] -&gt; a</li><li>atPoints :: [Point v n] -&gt; [a] -&gt; a</li></ul></aside></section><section><h2>Generating The Confetti</h2><h3>seed = 0, pieces = 50</h3><img width="400" src="./meetup/mirror.svg"><aside class="notes"><ul><li>evalRand $ confetti n (mkStdGen 0)</li></ul></aside></section><section><h2>Cut out a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
 isoceles n = polygon
   (def &amp; polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
        &amp; polyOrient .~ OrientH )
@@ -82,7 +82,7 @@ mkTriangle :: Int -&gt; Diagram B -&gt; Diagram B
 mkTriangle n = clipped tri # lw none
   where
   tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
-</code></pre></section><section><h2>The Triangle</h2><img width="400" src="./meetup/mirror2.svg"></section><section><h2>The Kaleidoscope</h2><pre><code data-trim="contenteditable" class="haskell">iterateIdx :: Integral i =&gt; (i -&gt; a -&gt; a) -&gt; a -&gt; [a]
+</code></pre><aside class="notes"><ul><li>A wedge might be better</li><li>TrailLike t</li><li>def and lens</li><li>clipBy - envelope of diagram</li><li>clipTo - envelope is pointwise min</li><li>clipped - envelope of clipping path</li></ul></aside></section><section><h2>The Triangle</h2><img width="400" src="./meetup/mirror2.svg"></section><section><h2>Reflect the Triangle</h2><h3>outlines just for visualization</h3><img width="400" src="./meetup/mirror4.svg"></section><section><h2>Keep reflecting</h2><img width="500" src="./meetup/mirror5.svg"></section><section><h2>The Kaleidoscope</h2><pre><code data-trim="contenteditable" class="haskell">iterateIdx :: Integral i =&gt; (i -&gt; a -&gt; a) -&gt; a -&gt; [a]
 iterateIdx f t = go f t 0
   where
     go f t i = let t&#39; = f i t
@@ -95,7 +95,7 @@ kaleidoscope d n = mconcat . take n $ iterateIdx next tri
     next t = reflectAbout
              (0 ^&amp; 0)
              (rotateBy (-fromIntegral t / fromIntegral n) xDir)
-</code></pre></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror4.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li><li>collaboration with juicy pixels</li><li>cairo, rasterific</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Backgound</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
+</code></pre><aside class="notes"><ul><li>Generalize to n triangles</li><li>directions - xDir</li><li>mconcat - atop</li></ul></aside></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror6.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li><li>collaboration with juicy pixels</li><li>cairo, rasterific</li><li>beesandbombs.tumblr.com</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Background</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
 stripes = (strutX 32
       ||| stripe
       ||| strutX 32

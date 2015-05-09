@@ -181,7 +181,7 @@ slideShow = do
     Nothing
     "firstDiagram.svg" 300
     "firstDiagram.hs" 1 100
-    [ "no NoMonoMorphismRestriction important to avoid crazy error messages"
+    [ "NoMonoMorphismRestriction important to avoid crazy error messages"
     , "import a backend, plugable"
     , "Diagram B - a type alias for 2d diagrams"
     , "mainWith vs defaultMain"
@@ -290,7 +290,7 @@ slideShow = do
       "A 2 Mirror Kaleidoscope"
       Nothing
       "kaleidoscope_by_mandelfish.jpg" 500
-      [ "reflcected isoceles triangles, 2n-gons"
+      [ "reflected isoceles triangles, 2n-gons"
       , "8-gon, 360 / 8 = 45 degree central anlge"
       , "random confetti in chamber"]
     slideCode'
@@ -298,27 +298,48 @@ slideShow = do
       Nothing
       "Mirror.hs" 5 17
       [ "palette"
-      , "MonadRandom: Rand g, evalRand"]
-    slideCode
-      "The Confetti"
+      , "MonadRandom: Rand g, evalRand"
+      , "not restricted to a fixed set of confetti, like a real kaleidoscope"]
+    slideCode'
+      "Generating The Confetti"
       Nothing
       "Mirror.hs" 19 31
-    slideImage
+      [ "position :: [(Point v n , a)] -> a"
+      , "atPoints :: [Point v n] -> [a] -> a"]
+    slideImage'
       "Generating The Confetti"
-      (Just "50 Pieces, Seed = 0")
+      (Just "seed = 0, pieces = 50")
       "mirror.svg" 400
-    slideCode
-      "Clip to a Triangle"
+      [ "evalRand $ confetti n (mkStdGen 0)"]
+    slideCode'
+      "Cut out a Triangle"
       Nothing
       "Mirror.hs" 36 47
+      [ "A wedge might be better"
+      , "TrailLike t"
+      , "def and lens"
+      , "clipBy - envelope of diagram"
+      , "clipTo - envelope is pointwise min"
+      , "clipped - envelope of clipping path"]
     slideImage
       "The Triangle"
       Nothing
       "mirror2.svg" 400
-    slideCode
+    slideImage
+      "Reflect the Triangle"
+      (Just "outlines just for visualization")
+      "mirror4.svg" 400
+    slideImage
+      "Keep reflecting"
+      Nothing
+      "mirror5.svg" 500
+    slideCode'
       "The Kaleidoscope"
       Nothing
       "Mirror.hs" 49 61
+      [ "Generalize to n triangles"
+      , "directions - xDir"
+      , "mconcat - atop"]
     slideImage
       "The Kaleidoscope"
       (Just "60 degrees, 6 triangles")
@@ -326,7 +347,7 @@ slideShow = do
     slideImage
       "The Kaleidoscope"
       (Just "36 degrees, 10 triangles")
-      "mirror4.svg" 400
+      "mirror6.svg" 400
   slide $ do
     slideImage'
       "Making GIFs with diagrams"
@@ -334,10 +355,11 @@ slideShow = do
       "pendulum.gif" 400
       [ "creating 3d GIFs by adding 2 lines"
       , "collaboration with juicy pixels"
-      , "cairo, rasterific"]
+      , "cairo, rasterific"
+      , "beesandbombs.tumblr.com"]
     slideImageCode'
       "Pendulum"
-      (Just "The Backgound")
+      (Just "The Background")
       "stripes.svg" 300
       "Pendulum.hs" 27 33
       [" GIFs have no alpha"

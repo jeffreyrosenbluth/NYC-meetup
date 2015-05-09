@@ -70,4 +70,34 @@ diagram3 :: Diagram B
 diagram3 = kaleidoscope d 10
   where d = mkConfetti 50 $ mkStdGen 0
 
+diagram4 :: Diagram B
+diagram4 = k2 d 6
+  where d = mkConfetti 50 $ mkStdGen 0
+
+diagram5 :: Diagram B
+diagram5 = k3 d 6
+  where d = mkConfetti 50 $ mkStdGen 0
+
+k2 :: Diagram B -> Int -> Diagram B
+k2 d n = mconcat . take 2 $ iterateIdx next tri
+  where
+    tri    = alignBR $ mkTriangle n d
+    next t = reflectAbout
+             (0 ^& 0)
+             (rotateBy (-fromIntegral t / fromIntegral n) xDir)
+    mkTriangle n d = clipped tri d <> (strokeP tri) # scale 1.05 # lw thick
+       where
+       tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
+
+k3 :: Diagram B -> Int -> Diagram B
+k3 d n = mconcat . take 3 $ iterateIdx next tri
+ where
+   tri    = alignBR $ mkTriangle n d
+   next t = reflectAbout
+            (0 ^& 0)
+            (rotateBy (-fromIntegral t / fromIntegral n) xDir)
+   mkTriangle n d = clipped tri d <> (strokeP tri) # scale 1.05 # lw thick
+      where
+      tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
+
 main = mainWith $ frame 0.1 diagram3
