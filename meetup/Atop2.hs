@@ -9,4 +9,9 @@ c2 = circle 1   # fc orange
 diagram :: Diagram B
 diagram = c1 ||| c2
 
+diagram' :: Diagram B
+diagram' = c1
+           ===
+           c2
+
 main = mainWith $ frame 0.1 diagram

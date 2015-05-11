@@ -10,7 +10,7 @@ sOrigin = showOrigin' (with & oScale .~ 0.04)
 diagram :: Diagram B
 diagram = h # alignR # sOrigin
       -- why not snugBL ?
-      `atop` h # snugB # snugL # sOrigin
-      `atop` h # snugT # snugL # sOrigin
+       <> h # snugB # snugL # sOrigin
+       <> h # snugT # snugL # sOrigin
 
 main = mainWith $ frame 0.1 diagram

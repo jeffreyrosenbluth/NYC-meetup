@@ -150,6 +150,7 @@ slideShow = do
       , "cabal update && cabal install diagrams"]
       [ "How many here have used diagrams?"
       , "website has tutorials, manual, gallery, blog, reference"]
+    slide $ img_ [src_ $ pack (path "website.png")]
     slideBullets'
       "5 Active Developers"
       (Just "67 Contributors")
@@ -159,7 +160,7 @@ slideShow = do
     slideImage'
       "Diagrams 1.3 released"
       (Just "Projections")
-      "table5.gif" 500
+      "projections.svg" 500
       ["plus lots more"]
     slideImage
       "Diagrams 1.3"
@@ -191,7 +192,7 @@ slideShow = do
       "Composing Diagrams"
       (Just "atop")
       "atop.svg" 300
-      "atop.hs" 6 10
+      "atop.hs" 6 13
       [ "default line color is black"
       , "defalut fill color is transparent"
       , "diagrams are monoids"
@@ -200,7 +201,7 @@ slideShow = do
       "Composing Diagrams"
       (Just "Side by Side")
       "atop2.svg" 400
-      "atop2.hs" 6 10
+      "atop2.hs" 6 15
     slideImage'
       "Composing Diagrams"
       (Just "Every diagram has a local origin")
@@ -212,16 +213,20 @@ slideShow = do
       "atop4.svg" 300
       "atop4.hs" 6 10
       [ "Places all local origings at (0,0)"]
-    slideImage
-      "Side by Side -- |||"
-      (Just "moveOriginTo + atop")
+    slideImage'
+      "Side by Side"
+      (Just "||| is moveOriginTo + atop")
       "atop5.svg" 400
+      [ "moves origin of orange circle left"
+      , "leaves origin of blue circle alone"
+      , "combine with <>"]
     slideImageCode'
       "Composing Diagrams"
       (Just "with beside")
       "atop6.svg" 300
       "atop6.hs" 6 10
-      [ "||| == beside (1,0)" ]
+      [ "||| == beside (1,0)"
+      , "explain ^&" ]
     slide $ do
        h2_ "Moral"
        h4_ "All defined in terms of atop and moveOriginTo"
@@ -242,7 +247,8 @@ slideShow = do
       "Bounding Boxes"
       (Just "beside (1, 1)")
       "boundingbox.svg" 400
-      [ "not compositional"
+      [ "notice beside doesn't really work like this"
+      , "not compositional"
       , "not general"
       , "what to do with bounding box under rotation"
       , "bounding paths are complicated"]
@@ -256,19 +262,28 @@ slideShow = do
       (Just "beside (1, 1)")
       "envelope2.svg" 400
       [ "Now we see the connection between envelopes and atop"]
+    slideImage'
+      "Envelopes"
+      (Just "beside (1, 1)")
+      "envelope4b.svg" 400
+      [ "What do you think happens if `beside (1.5 ^& 1)`"
+      , "think of line with sope 2/3 from left origin"]
     slideImage
       "Envelopes"
       (Just "beside (1.5, 1)")
       "envelope4a.svg" 400
-    slideImage
+    slideImage'
       "Envelopes"
       (Just "beside (1.5, 1)")
       "envelope4.svg" 400
+      [ "We can move these squares closer along line connection origins"
+      , "What is going on?"]
     slide $ do
       h2_ "Envelopes"
       h3_ "Depend on the local origin"
       ul_ $ do
         li_ "not always intuitive"
+        li_ "extensional not intensional"
         li_ "not the same as the convex hull"
       img_ [src_ $ pack (path "envelope3.svg") , width_ "500"]
       p_ $

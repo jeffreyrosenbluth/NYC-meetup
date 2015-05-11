@@ -9,7 +9,7 @@ sOrigin = showOrigin' (with & oScale .~ 0.04)
 
 diagram :: Diagram B
 diagram = h # alignR  # sOrigin
-      ||| h # alignBL # sOrigin
-      ||| h # alignTL # sOrigin
+       <> h # alignBL # sOrigin
+       <> h # alignTL # sOrigin
 
 main = mainWith $ frame 0.1 diagram
