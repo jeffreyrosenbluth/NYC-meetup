@@ -191,7 +191,7 @@ slideShow = do
     slideImageCode'
       "Composing Diagrams"
       (Just "atop")
-      "atop.svg" 300
+      "atop.svg" 250
       "atop.hs" 6 13
       [ "default line color is black"
       , "defalut fill color is transparent"
@@ -200,7 +200,7 @@ slideShow = do
     slideImageCode
       "Composing Diagrams"
       (Just "Side by Side")
-      "atop2.svg" 400
+      "atop2.svg" 300
       "atop2.hs" 6 15
     slideImage'
       "Composing Diagrams"
@@ -209,7 +209,7 @@ slideShow = do
       [ "You can think of it as the point (0,0) on global grid"]
     slideImageCode'
       "Composing Diagrams"
-      (Just "with atop")
+      (Just "Local Origin")
       "atop4.svg" 300
       "atop4.hs" 6 10
       [ "Places all local origings at (0,0)"]
@@ -292,7 +292,7 @@ slideShow = do
     slideImageCode'
       "Align"
       (Just "Moves the local origin to the envelope")
-      "align.svg" 400
+      "align.svg" 300
       "Align.hs" 6 13
       [ "primed versions like showOrigin' take an default record"
       , "see section 2.2 of manual, faking optional named arguments"
