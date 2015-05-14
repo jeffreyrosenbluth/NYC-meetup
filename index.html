@@ -141,4 +141,15 @@ gif :: [(Diagram B, Int)]
 gif = zip dias delays
 
 main = mainWith $ gif
-</code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>Reveal.initialize({ controls: true, progress: true, history: true, center: true, transition: 'slide', dependencies: [ { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } }, { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } }, { src: 'plugin/zoom-js/zoom.js', async: true }, { src: 'plugin/notes/notes.js', async: true } ] });</script></body></html>
+</code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section><section><h2>TrailLike</h2><pre><code data-trim="contenteditable" class="haskell">class (Metric (V t), OrderedField (N t)) =&gt; TrailLike t where
+  trailLike :: Located (Trail (V t) (N t)) -&gt; t
+
+instance (Metric v, OrderedField n) =&gt; TrailLike [Point v n] where
+  trailLike = trailPoints
+
+instance (Metric v, OrderedField n) =&gt; TrailLike (Path v n) where
+  trailLike = Path . (:[])
+
+instance (TypeableFloat n, Renderable (Path V2 n) b)
+    =&gt; TrailLike (QDiagram b V2 n Any) where
+  trailLike = strokeP . trailLike</code></pre></section><section><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>Scale Invariance</h2><img width="400" src="./meetup/arrows1.svg"></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>Reveal.initialize({ controls: true, progress: true, history: true, center: true, transition: 'slide', dependencies: [ { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } }, { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } }, { src: 'plugin/zoom-js/zoom.js', async: true }, { src: 'plugin/notes/notes.js', async: true } ] });</script></body></html>

@@ -404,6 +404,28 @@ slideShow = do
       "A 3 Mirror Kaleidoscope"
       Nothing
      "kaleidoscope.gif" 400
+  slide $ do
+    h2_ "TrailLike"
+    code $
+      "class (Metric (V t), OrderedField (N t)) => TrailLike t where\n\
+      \  trailLike :: Located (Trail (V t) (N t)) -> t\n\
+      \\n\
+      \instance (Metric v, OrderedField n) => TrailLike [Point v n] where\n\
+      \  trailLike = trailPoints\n\
+      \\n\
+      \instance (Metric v, OrderedField n) => TrailLike (Path v n) where\n\
+      \  trailLike = Path . (:[])\n\
+      \\n\
+      \instance (TypeableFloat n, Renderable (Path V2 n) b)\n\
+      \    => TrailLike (QDiagram b V2 n Any) where\n\
+      \  trailLike = strokeP . trailLike"
+  slide $ do
+    h2_ "What's so tricky about arrows?"
+  slideImage
+    "Scale Invariance"
+    Nothing
+    "arrows1.svg" 400
+
 
 main :: IO ()
 main = do
