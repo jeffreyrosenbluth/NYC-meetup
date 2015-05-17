@@ -89,6 +89,13 @@ slideImageCode' title subtitle imageUrl size codeFile a b notes = do
     code $ toHtml hs)
     notes
 
+slideBullets :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> HtmlIO
+slideBullets title subtitle bullets =
+  slide $ do
+    h2_ title
+    maybe "" h3_ subtitle
+    ul_ (mapM_ li_ bullets)
+
 slideBullets' :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> [HtmlIO] -> HtmlIO
 slideBullets' title subtitle bullets notes =
   slide' (do
@@ -420,11 +427,56 @@ slideShow = do
       \    => TrailLike (QDiagram b V2 n Any) where\n\
       \  trailLike = strokeP . trailLike"
   slide $ do
-    h2_ "What's so tricky about arrows?"
-  slideImage
-    "Scale Invariance"
-    Nothing
-    "arrows1.svg" 400
+    slide $ do
+      h1_ "Design Challenge"
+      h2_ "What's so tricky about arrows?"
+    slideBullets
+      "Arrows"
+      Nothing
+      [ "We usually don't want arrow heads to scale with the diagram."
+      , "Arrows should connect the same points before and after scaling."
+      , "Arrow heads can be translucent - no overlap with the head.\
+      \  This means the head needs to be connected to the shaft with a joint."
+      , "As we will see, this requires the joint size to depend on the line width."
+      , "Shafts can be any curve not just straight lines."]
+    slideImage'
+      "Scale Invariance"
+      (Just "We usually don't want arrow heads to scale")
+      "arrows1.svg" 400
+      [ "Don't want head size to change"
+      , "Non uniform scaling can cause a preceived rotation"]
+    slideImage
+      "Scale Invariance"
+      (Just "But then the shaft can end up too small")
+      "arrows2.svg" 500
+    slideImage'
+      "Arrow heads and tails"
+      Nothing
+      "arrowheads.svg" 600
+      [ "If we have an arrow head with a concave back, it will leave a gap\
+        \ when connected to a shaft"]
+    slideImage'
+      "This is why we need joints"
+      (Just "The dart arrow head with a fat shaft")
+      "nojoint.svg" 600
+      [ "So the size of the joint depends on the line width"
+      , "Line width is very flexible in diagrams and we don't know it\
+      \  at the time the arrow is made."]
+    slideBullets
+      "Line Width"
+      (Just "may be scaled:")
+      [ "to absolute size (pixels) "
+      , "to a percentage of diagram size"
+      , "locally (like length)"
+      , "globally (for backward compatibility)"]
+    slideImage
+      "Arrow API"
+      Nothing
+      "arrows.svg" 600
+    slideCode
+      "Arrow Options"
+      (Just "Can't just simply apply a style")
+      "ArrowOpts.hs" 1 13
 
 
 main :: IO ()
