@@ -469,6 +469,14 @@ slideShow = do
       , "to a percentage of diagram size"
       , "locally (like length)"
       , "globally (for backward compatibility)"]
+    slideCode
+      "The Diagram type"
+      Nothing
+      "QDiagram.hs" 1 13
+    slideCode
+      "The Diagram type"
+      Nothing
+      "QDiagram.hs" 15 28
     slideImage
       "Arrow API"
       Nothing

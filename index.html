@@ -152,7 +152,34 @@ instance (Metric v, OrderedField n) =&gt; TrailLike (Path v n) where
 
 instance (TypeableFloat n, Renderable (Path V2 n) b)
     =&gt; TrailLike (QDiagram b V2 n Any) where
-  trailLike = strokeP . trailLike</code></pre></section><section><section><h1>Design Challenge</h1><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>Arrows</h2><ul><li>We usually don&#39;t want arrow heads to scale with the diagram.</li><li>Arrows should connect the same points before and after scaling.</li><li>Arrow heads can be translucent - no overlap with the head.  This means the head needs to be connected to the shaft with a joint.</li><li>As we will see, this requires the joint size to depend on the line width.</li><li>Shafts can be any curve not just straight lines.</li></ul></section><section><h2>Scale Invariance</h2><h3>We usually don&#39;t want arrow heads to scale</h3><img width="400" src="./meetup/arrows1.svg"><aside class="notes"><ul><li>Don&#39;t want head size to change</li><li>Non uniform scaling can cause a preceived rotation</li></ul></aside></section><section><h2>Scale Invariance</h2><h3>But then the shaft can end up too small</h3><img width="500" src="./meetup/arrows2.svg"></section><section><h2>Arrow heads and tails</h2><img width="600" src="./meetup/arrowheads.svg"><aside class="notes"><ul><li>If we have an arrow head with a concave back, it will leave a gap when connected to a shaft</li></ul></aside></section><section><h2>This is why we need joints</h2><h3>The dart arrow head with a fat shaft</h3><img width="600" src="./meetup/nojoint.svg"><aside class="notes"><ul><li>So the size of the joint depends on the line width</li><li>Line width is very flexible in diagrams and we don&#39;t know it  at the time the arrow is made.</li></ul></aside></section><section><h2>Line Width</h2><h3>may be scaled:</h3><ul><li>to absolute size (pixels) </li><li>to a percentage of diagram size</li><li>locally (like length)</li><li>globally (for backward compatibility)</li></ul></section><section><h2>Arrow API</h2><img width="600" src="./meetup/arrows.svg"></section><section><h2>Arrow Options</h2><h3>Can&#39;t just simply apply a style</h3><pre><code data-trim="contenteditable" class="haskell">data ArrowOpts n
+  trailLike = strokeP . trailLike</code></pre></section><section><section><h1>Design Challenge</h1><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>Arrows</h2><ul><li>We usually don&#39;t want arrow heads to scale with the diagram.</li><li>Arrows should connect the same points before and after scaling.</li><li>Arrow heads can be translucent - no overlap with the head.  This means the head needs to be connected to the shaft with a joint.</li><li>As we will see, this requires the joint size to depend on the line width.</li><li>Shafts can be any curve not just straight lines.</li></ul></section><section><h2>Scale Invariance</h2><h3>We usually don&#39;t want arrow heads to scale</h3><img width="400" src="./meetup/arrows1.svg"><aside class="notes"><ul><li>Don&#39;t want head size to change</li><li>Non uniform scaling can cause a preceived rotation</li></ul></aside></section><section><h2>Scale Invariance</h2><h3>But then the shaft can end up too small</h3><img width="500" src="./meetup/arrows2.svg"></section><section><h2>Arrow heads and tails</h2><img width="600" src="./meetup/arrowheads.svg"><aside class="notes"><ul><li>If we have an arrow head with a concave back, it will leave a gap when connected to a shaft</li></ul></aside></section><section><h2>This is why we need joints</h2><h3>The dart arrow head with a fat shaft</h3><img width="600" src="./meetup/nojoint.svg"><aside class="notes"><ul><li>So the size of the joint depends on the line width</li><li>Line width is very flexible in diagrams and we don&#39;t know it  at the time the arrow is made.</li></ul></aside></section><section><h2>Line Width</h2><h3>may be scaled:</h3><ul><li>to absolute size (pixels) </li><li>to a percentage of diagram size</li><li>locally (like length)</li><li>globally (for backward compatibility)</li></ul></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type Diagram b = QDiagram b (V b) (N b) Any
+
+newtype QDiagram b v n m
+  = QD (DUALTree (DownAnnots v n)
+                 (UpAnnots b v n m)
+                  Annotation
+                 (QDiaLeaf b v n m) )
+  deriving Typeable
+
+data QDiaLeaf b v n m
+  = PrimLeaf (Prim b v n)
+  | DelayedLeaf (DownAnnots v n -&gt; n -&gt; n -&gt; QDiagram b v n m)
+  deriving Functor
+</code></pre></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type UpAnnots b v n m = Deletable (Envelope v n)
+                    ::: Deletable (Trace v n)
+                    ::: Deletable (SubMap b v n m)
+                    ::: Query v n m
+                    ::: ()
+
+type DownAnnots v n = (Transformation v n :+: Style v n)
+                  ::: Name
+                  ::: ()
+
+data Annotation
+  = Href String    -- ^ Hyperlink
+  | OpacityGroup Double
+  deriving Show
+</code></pre></section><section><h2>Arrow API</h2><img width="600" src="./meetup/arrows.svg"></section><section><h2>Arrow Options</h2><h3>Can&#39;t just simply apply a style</h3><pre><code data-trim="contenteditable" class="haskell">data ArrowOpts n
   = ArrowOpts
     { _arrowHead  :: ArrowHT n
     , _arrowTail  :: ArrowHT n
