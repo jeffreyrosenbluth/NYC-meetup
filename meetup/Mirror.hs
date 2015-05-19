@@ -28,7 +28,7 @@ confetti n = do
                               # opacity a # lw none
       pos  = zipWith mkP2 xs ys
       conf = zipWith3 mkCirc ss cs as
-  return $ position (zip pos conf)
+  return $ atPoints pos conf
 
 mkConfetti :: Int -> (StdGen -> Diagram B)
 mkConfetti n = evalRand $ confetti n

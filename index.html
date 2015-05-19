@@ -1,4 +1,23 @@
-<html><head><meta charset="utf-8"><title>Diagrams 1.3</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="css/reveal.css" rel="stylesheet"><link href="css/theme/white.css" id="theme" rel="stylesheet"><link href="lib/css/github.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section><section><h2>diagrams</h2><h3>Declarative domain-specific language for creating vector graphics</h3><ul><li><a href="http://projects.haskell.org/diagrams/">http://projects.haskell.org/diagrams/</a></li><li> diagrams-core</li><li>diagrams-lib</li><li>diagrams-svg, diagrams-rasterific, ...</li><li>cabal update &amp;&amp; cabal install diagrams</li></ul><aside class="notes"><ul><li>How many here have used diagrams?</li><li>website has tutorials, manual, gallery, blog, reference</li></ul></aside></section><section><img src="./meetup/website.png"></section><section><h2>5 Active Developers</h2><h3>67 Contributors</h3><ul><li>Chris Chalmers</li><li>Daniel Bergey</li><li>Jeffrey Rosenbluth</li><li>Ryan Yates</li><li>Brent Yorgey</li></ul><aside class="notes"><ul><li>The diagrams team</li><li>see blog post contributors list</li></ul></aside></section></section><section><section><h2>Diagrams 1.3 released</h2><h3>Projections</h3><img width="500" src="./meetup/projections.svg"><aside class="notes"><ul><li>plus lots more</li></ul></aside></section><section><h2>Diagrams 1.3</h2><h3>Path Intersections</h3><img width="600" src="./meetup/intersections.png"></section><section><h2>Diagrams 1.3</h2><h3>Grouping for Opacity</h3><img width="600" src="./meetup/group-opacity.png"></section><section><h2>Diagrams 1.3</h2><h3>New Backends</h3><ul><li>diagrams-pgf</li><li>diagrams-canvas</li><li>diagrams-hmlt5</li></ul></section></section><section><h2>A Diagram</h2><img width="300" src="./meetup/firstDiagram.svg"><pre><code data-trim="contenteditable" class="haskell">{-# LANGUAGE NoMonomorphismRestriction #-}
+<html><head><meta charset="utf-8"><title>Diagrams 1.3</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="css/reveal.css" rel="stylesheet"><link href="css/theme/white.css" id="theme" rel="stylesheet"><link href="lib/css/github.css" rel="stylesheet"></head><body><div class="reveal"><div class="slides"><section><section><h2>diagrams</h2><h3>Declarative domain-specific language for creating vector graphics</h3><ul><li><a href="http://projects.haskell.org/diagrams/">http://projects.haskell.org/diagrams/</a></li><li> diagrams-core</li><li>diagrams-lib</li><li>diagrams-svg, diagrams-rasterific, ...</li><li>cabal update &amp;&amp; cabal install diagrams</li></ul><aside class="notes"><ul><li>How many here have used diagrams?</li><li>website has tutorials, manual, gallery, blog, reference</li></ul></aside></section><section><img src="./meetup/website.png"></section><section><h2>5 Active Developers</h2><h3>67 Contributors</h3><ul><li>Chris Chalmers</li><li>Daniel Bergey</li><li>Jeffrey Rosenbluth</li><li>Ryan Yates</li><li>Brent Yorgey</li></ul><aside class="notes"><ul><li>The diagrams team</li><li>see blog post contributors list</li></ul></aside></section></section><section><section><h2>Diagrams 1.3 released</h2><h3>Projections</h3><img width="500" src="./meetup/projections.svg"><aside class="notes"><ul><li>plus lots more</li></ul></aside></section><section><h2>Diagrams 1.3</h2><h3>Path Intersections</h3><img width="600" src="./meetup/intersections.png"></section><section><h2>Diagrams 1.3</h2><h3>Grouping for Opacity</h3><img width="600" src="./meetup/group-opacity.png"></section><section><h2>Diagrams 1.3</h2><h3>New Backends</h3><ul><li>diagrams-pgf</li><li>diagrams-canvas</li><li>diagrams-hmlt5</li></ul></section></section><section><section><h2>Sierpinski Triangle</h2><h3>Asymptote - vector graphics language</h3><img width="300" src="./meetup/sierpinski.png"><pre><code data-trim="contenteditable" class="c">// Draw Sierpinski triangle with top vertex A, side s, and depth q.
+void Sierpinski(pair A, real s, int q, bool top=true)
+{
+  pair B=A-(1,sqrt(2))*s/2;
+  pair C=B+s;
+  if(top) draw(A--B--C--cycle);
+  draw((A+B)/2--(B+C)/2--(A+C)/2--cycle);
+  if(q &gt; 0) {
+    Sierpinski(A,s/2,q-1,false);
+    Sierpinski((A+B)/2,s/2,q-1,false);
+    Sierpinski((A+C)/2,s/2,q-1,false);
+  }
+}
+
+Sierpinski((0,1),1,5);</code></pre><aside class="notes"><ul><li>calculates coordinates of each vertex</li><li>and the coordinates of the top of each triangle</li><li>hard to change the type of triangle, or use different shape</li></ul></aside></section><section><h2>Sierpinski Triangle</h2><h3>diagrams - EDSL</h3><img width="300" src="./meetup/sierpinskicircle.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski 1 = triangle 1 -- hexagon 1 ...
+sierpinski n =    s
+                 ===
+              (s ||| s) # centerX
+  where s = sierpinski (n-1)
+</code></pre><aside class="notes"><ul><li>easy change to pass in a general shape</li><li>play around, e.g. rotate triangles by amount dependng on n</li><li>change centerX to alignL, etc</li></ul></aside></section><section><h2>A Diagram</h2><img width="300" src="./meetup/firstDiagram.svg"><pre><code data-trim="contenteditable" class="haskell">{-# LANGUAGE NoMonomorphismRestriction #-}
 
 import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
@@ -7,7 +26,7 @@ diagram :: Diagram B
 diagram = circle 1 # lw ultraThick # lc purple # fc orange
 
 main = mainWith $ frame 0.1 diagram
-</code></pre><aside class="notes"><ul><li>NoMonoMorphismRestriction important to avoid crazy error messages</li><li>import a backend, plugable</li><li>Diagram B - a type alias for 2d diagrams</li><li>mainWith vs defaultMain</li><li>not going to show mainWith from here in</li></ul></aside></section><section><section><h2>Composing Diagrams</h2><h3>atop</h3><img width="250" src="./meetup/atop.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
+</code></pre><aside class="notes"><ul><li>NoMonoMorphismRestriction important to avoid crazy error messages</li><li>import a backend, plugable</li><li>Diagram B - a type alias for 2d diagrams</li><li>mainWith vs defaultMain</li><li>not going to show mainWith from here on in</li></ul></aside></section></section><section><section><h2>Composing Diagrams</h2><h3>atop</h3><img width="250" src="./meetup/atop.svg"><pre><code data-trim="contenteditable" class="haskell">c1 = circle 0.5 # fc steelblue
 c2 = circle 1   # fc orange
 
 diagram :: Diagram B
@@ -35,7 +54,7 @@ c2 = circle 1   # fc orange
 
 diagram :: Diagram B
 diagram = beside (1 ^&amp; 1) c1 c2 # showOrigin
-</code></pre><aside class="notes"><ul><li>||| == beside (1,0)</li><li>explain ^&amp;</li></ul></aside></section><section><h2>Moral</h2><h4>All defined in terms of atop and moveOriginTo</h4><ul><li>besde, |||, ===</li><li>cat, hcat, vcat, hsep, vsep</li><li>juxtapose</li><li>position</li><li>appends</li></ul></section></section><section><section><h4>How do we know where to place diagrams when composing so that they don&#39;t overlap?</h4><ul><li><del>Bounding Boxes</del></li><li>Envelopes</li></ul></section><section><h2>Bounding Boxes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/boundingbox.svg"><aside class="notes"><ul><li>notice beside doesn&#39;t really work like this</li><li>not compositional</li><li>not general</li><li>what to do with bounding box under rotation</li><li>bounding paths are complicated</li></ul></aside></section><section><h2>Envelopes</h2><img width="500" src="./meetup/envelope.svg"><aside class="notes"><ul><li>how far to supporting hyperplane</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope2.svg"><aside class="notes"><ul><li>Now we see the connection between envelopes and atop</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope4b.svg"><aside class="notes"><ul><li>What do you think happens if `beside (1.5 ^&amp; 1)`</li><li>think of line with sope 2/3 from left origin</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1.5, 1)</h3><img width="400" src="./meetup/envelope4a.svg"></section><section><h2>Envelopes</h2><h3>beside (1.5, 1)</h3><img width="400" src="./meetup/envelope4.svg"><aside class="notes"><ul><li>We can move these squares closer along line connection origins</li><li>What is going on?</li></ul></aside></section><section><h2>Envelopes</h2><h3>Depend on the local origin</h3><ul><li>not always intuitive</li><li>extensional not intensional</li><li>not the same as the convex hull</li></ul><img width="500" src="./meetup/envelope3.svg"><p><a href="https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/">https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf</a></p></section><section><h2>Align</h2><h3>Moves the local origin to the envelope</h3><img width="300" src="./meetup/align.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
+</code></pre><aside class="notes"><ul><li>||| == beside (1,0)</li><li>explain ^&amp;</li></ul></aside></section><section><h2>Moral</h2><h4>All defined in terms of atop and moveOriginTo</h4><ul><li>besde, |||, ===</li><li>cat, hcat, vcat, hsep, vsep</li><li>juxtapose</li><li>position</li><li>appends</li></ul></section></section><section><section><h3>How do we know where to place diagrams when composing so that they don&#39;t overlap?</h3><ul><li><del>Bounding Boxes</del></li><li>Envelopes</li></ul></section><section><h2>Bounding Boxes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/boundingbox.svg"><aside class="notes"><ul><li>notice beside doesn&#39;t really work like this</li><li>not compositional</li><li>not general</li><li>what to do with bounding box under rotation</li><li>bounding paths are complicated</li></ul></aside></section><section><h2>Envelopes</h2><img width="500" src="./meetup/envelope.svg"><aside class="notes"><ul><li>how far to supporting hyperplane</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope2.svg"><aside class="notes"><ul><li>Now we see the connection between envelopes and atop</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1, 1)</h3><img width="400" src="./meetup/envelope4b.svg"><aside class="notes"><ul><li>What do you think happens if `beside (1.5 ^&amp; 1)`</li><li>think of line with sope 2/3 from left origin</li></ul></aside></section><section><h2>Envelopes</h2><h3>beside (1.5, 1)</h3><img width="400" src="./meetup/envelope4a.svg"></section><section><h2>Envelopes</h2><h3>beside (1.5, 1)</h3><img width="400" src="./meetup/envelope4.svg"><aside class="notes"><ul><li>We can move these squares closer along line connection origins</li><li>What is going on?</li></ul></aside></section><section><h2>Envelopes</h2><h3>Depend on the local origin</h3><ul><li>not always intuitive</li><li>extensional not intensional</li><li>not the same as the convex hull</li></ul><img width="500" src="./meetup/envelope3.svg"><p><a href="https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf/">https://github.com/diagrams/diagrams-doc/blob/master/envelope/envelope.pdf</a></p></section><section><h2>Align</h2><h3>Moves the local origin to the envelope</h3><img width="300" src="./meetup/align.svg"><pre><code data-trim="contenteditable" class="haskell">h = hexagon 1 # fc lightgreen
 
 sOrigin = showOrigin&#39; (with &amp; oScale .~ 0.04)
 
@@ -52,7 +71,7 @@ diagram = h # alignR # sOrigin
       -- why not snugBL ?
        &lt;&gt; h # snugB # snugL # sOrigin
        &lt;&gt; h # snugT # snugL # sOrigin
-</code></pre><aside class="notes"><ul><li>This cannot be done using align since envelopes prevent overlap</li><li>same align but uses trace instead of envelope</li></ul></aside></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"><aside class="notes"><ul><li>reflected isoceles triangles, 2n-gons</li><li>8-gon, 360 / 8 = 45 degree central anlge</li><li>random confetti in chamber</li></ul></aside></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
+</code></pre><aside class="notes"><ul><li>This cannot be done using align since envelopes prevent overlap</li><li>same align but uses trace instead of envelope</li><li>you can actually define your own boundry function - Alignable</li></ul></aside></section></section><section><section><h2>A 2 Mirror Kaleidoscope</h2><img width="500" src="./meetup/kaleidoscope_by_mandelfish.jpg"><aside class="notes"><ul><li>reflected isoceles triangles, 2n-gons</li><li>8-gon, 360 / 8 = 45 degree central anlge</li><li>random confetti in chamber</li></ul></aside></section><section><h2>Preliminaries</h2><pre><code data-trim="contenteditable" class="haskell">import           Control.Monad                 (replicateM)
 import           Control.Monad.Random
 import           Data.Colour.Palette.ColorSet
 import           Data.List                     (zipWith, zipWith3)
@@ -77,8 +96,10 @@ confetti n = do
                               # opacity a # lw none
       pos  = zipWith mkP2 xs ys
       conf = zipWith3 mkCirc ss cs as
-  return $ position (zip pos conf)
-</code></pre><aside class="notes"><ul><li>position :: [(Point v n , a)] -&gt; a</li><li>atPoints :: [Point v n] -&gt; [a] -&gt; a</li></ul></aside></section><section><h2>Generating The Confetti</h2><h3>seed = 0, pieces = 50</h3><img width="400" src="./meetup/mirror.svg"><aside class="notes"><ul><li>evalRand $ confetti n (mkStdGen 0)</li></ul></aside></section><section><h2>Cut out a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
+  return $ atPoints pos conf
+</code></pre><aside class="notes"><ul><li>position :: [(Point v n , a)] -&gt; a</li><li>atPoints :: [Point v n] -&gt; [a] -&gt; a</li></ul></aside></section><section><h2>Generating The Confetti</h2><h3>seed = 0, pieces = 50</h3><img width="400" src="./meetup/mirror.svg"><pre><code data-trim="contenteditable" class="haskell">mkConfetti :: Int -&gt; (StdGen -&gt; Diagram B)
+mkConfetti n = evalRand $ confetti n
+</code></pre><aside class="notes"><ul><li>evalRand $ confetti n (mkStdGen 0)</li></ul></aside></section><section><h2>Cut out a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
 isoceles n = polygon
   (def &amp; polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
        &amp; polyOrient .~ OrientH )
@@ -103,30 +124,30 @@ kaleidoscope d n = mconcat . take n $ iterateIdx next tri
     next t = reflectAbout
              (0 ^&amp; 0)
              (rotateBy (-fromIntegral t / fromIntegral n) xDir)
-</code></pre><aside class="notes"><ul><li>Generalize to n triangles</li><li>directions - xDir</li><li>mconcat - atop</li></ul></aside></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror6.svg"></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li><li>collaboration with juicy pixels</li><li>cairo, rasterific</li><li>beesandbombs.tumblr.com</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Background</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
+</code></pre><aside class="notes"><ul><li>Generalize to n triangles</li><li>directions - xDir</li><li>mconcat - atop</li></ul></aside></section><section><h2>The Kaleidoscope</h2><h3>60 degrees, 6 triangles</h3><img width="400" src="./meetup/mirror3.svg"></section><section><h2>The Kaleidoscope</h2><h3>36 degrees, 10 triangles</h3><img width="400" src="./meetup/mirror6.svg"><aside class="notes"><ul><li>A real kaleidoscope has moving confetti</li></ul></aside></section></section><section><section><h2>Making GIFs with diagrams</h2><img width="400" src="./meetup/pendulum.gif"><aside class="notes"><ul><li>creating 3d GIFs by adding 2 lines</li><li>collaboration with juicy pixels</li><li>cairo, rasterific</li><li>beesandbombs.tumblr.com</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Background</h3><img width="300" src="./meetup/stripes.svg"><pre><code data-trim="contenteditable" class="haskell">stripes :: Diagram B
 stripes = (strutX 32
       ||| stripe
       ||| strutX 32
       ||| stripe
       ||| strutX 30) # center
   where stripe = square 100 # scaleX 0.03 # fc white # lc white
-</code></pre><aside class="notes"><ul><li> GIFs have no alpha</li><li>dont need the black square</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
+</code></pre><aside class="notes"><ul><li> GIFs have no alpha</li><li>dont need the black square</li><li>make rectangles by scaling squares</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
 radial = mkRadialGradient (mkStops [(white,0,1), (black,1,1)])
                           ((-0.25) ^&amp; (0.25)) 0.1 (0 ^&amp; 0) 1.5
                           GradPad
 </code></pre></section><section><h2>Pendulum</h2><pre><code data-trim="contenteditable" class="haskell">pend :: V2 Double -&gt; Diagram B
-pend v = bob # translate (e .-. origin) &lt;&gt; rope
+pend v = bob # translate (e .-. origin) &lt;&gt; rod
   where
     ellipsePath :: Diagram B
     ellipsePath = circle 25 # scaleX 1.5
-    bob = scale size $ circle 1 # fillTexture radial # lw none
+    bob  = scale size $ circle 1 # fillTexture radial # lw none
     size = 3.5 * sqrt (2 - y)
-    rope = arrowBetween&#39; (with &amp; shaftStyle %~ lw thick # lc gray
+    rod  = arrowBetween&#39; (with &amp; shaftStyle %~ lw thick # lc gray
                                &amp; arrowHead .~ noHead) s e
     s = (0 ^&amp; 50)
     e = fromMaybe origin (rayTraceP origin v ellipsePath)
     (x, y) = unr2 v -- v ^. r2Iso
-</code></pre></section><section><h2>Pendulum</h2><h3>All together now</h3><pre><code data-trim="contenteditable" class="haskell">mkFrame :: V2 Double -&gt; Diagram B
+</code></pre><aside class="notes"><ul><li>there are ellipse functions in diagrams</li></ul></aside></section><section><h2>Pendulum</h2><h3>All together now</h3><pre><code data-trim="contenteditable" class="haskell">mkFrame :: V2 Double -&gt; Diagram B
 mkFrame v
   | (snd $ unr2 v) &gt; 0 = stripes &lt;&gt; pend v
   -- |  v ^. (r2Iso . _2) &gt; 0 ...
@@ -141,18 +162,7 @@ gif :: [(Diagram B, Int)]
 gif = zip dias delays
 
 main = mainWith $ gif
-</code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section><section><h2>TrailLike</h2><pre><code data-trim="contenteditable" class="haskell">class (Metric (V t), OrderedField (N t)) =&gt; TrailLike t where
-  trailLike :: Located (Trail (V t) (N t)) -&gt; t
-
-instance (Metric v, OrderedField n) =&gt; TrailLike [Point v n] where
-  trailLike = trailPoints
-
-instance (Metric v, OrderedField n) =&gt; TrailLike (Path v n) where
-  trailLike = Path . (:[])
-
-instance (TypeableFloat n, Renderable (Path V2 n) b)
-    =&gt; TrailLike (QDiagram b V2 n Any) where
-  trailLike = strokeP . trailLike</code></pre></section><section><section><h1>Design Challenge</h1><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>Arrows</h2><ul><li>We usually don&#39;t want arrow heads to scale with the diagram.</li><li>Arrows should connect the same points before and after scaling.</li><li>Arrow heads can be translucent - no overlap with the head.  This means the head needs to be connected to the shaft with a joint.</li><li>As we will see, this requires the joint size to depend on the line width.</li><li>Shafts can be any curve not just straight lines.</li></ul></section><section><h2>Scale Invariance</h2><h3>We usually don&#39;t want arrow heads to scale</h3><img width="400" src="./meetup/arrows1.svg"><aside class="notes"><ul><li>Don&#39;t want head size to change</li><li>Non uniform scaling can cause a preceived rotation</li></ul></aside></section><section><h2>Scale Invariance</h2><h3>But then the shaft can end up too small</h3><img width="500" src="./meetup/arrows2.svg"></section><section><h2>Arrow heads and tails</h2><img width="600" src="./meetup/arrowheads.svg"><aside class="notes"><ul><li>If we have an arrow head with a concave back, it will leave a gap when connected to a shaft</li></ul></aside></section><section><h2>This is why we need joints</h2><h3>The dart arrow head with a fat shaft</h3><img width="600" src="./meetup/nojoint.svg"><aside class="notes"><ul><li>So the size of the joint depends on the line width</li><li>Line width is very flexible in diagrams and we don&#39;t know it  at the time the arrow is made.</li></ul></aside></section><section><h2>Line Width</h2><h3>may be scaled:</h3><ul><li>to absolute size (pixels) </li><li>to a percentage of diagram size</li><li>locally (like length)</li><li>globally (for backward compatibility)</li></ul></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type Diagram b = QDiagram b (V b) (N b) Any
+</code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section><section><section><h1>Design Challenge</h1><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>Arrows</h2><ul><li>We usually don&#39;t want arrow heads to scale with the diagram.</li><li>Arrows should connect the same points before and after scaling.</li><li>Arrow heads can be translucent - no overlap with the head.  This means the head needs to be connected to the shaft with a joint.</li><li>As we will see, this requires the joint size to depend on the line width.</li><li>Shafts can be any curve not just straight lines.</li></ul></section><section><h2>Scale Invariance</h2><h3>We usually don&#39;t want arrow heads to scale</h3><img width="400" src="./meetup/arrows1.svg"><aside class="notes"><ul><li>Don&#39;t want head size to change</li><li>Non uniform scaling can cause a preceived rotation</li></ul></aside></section><section><h2>Scale Invariance</h2><h3>But then the shaft can end up too small</h3><img width="500" src="./meetup/arrows2.svg"></section><section><h2>Arrow heads and tails</h2><img width="600" src="./meetup/arrowheads.svg"><aside class="notes"><ul><li>If we have an arrow head with a concave back, it will leave a gap when connected to a shaft</li></ul></aside></section><section><h2>This is why we need joints</h2><h3>The dart arrow head with a fat shaft</h3><img width="600" src="./meetup/nojoint.svg"><aside class="notes"><ul><li>So the size of the joint depends on the line width</li><li>Line width is very flexible in diagrams and we don&#39;t know it  at the time the arrow is made.</li></ul></aside></section><section><h2>Line Width</h2><h3>may be scaled:</h3><ul><li>to absolute size (pixels) </li><li>to a percentage of diagram size</li><li>locally (like length)</li><li>globally (for backward compatibility)</li></ul></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type Diagram b = QDiagram b (V b) (N b) Any
 
 newtype QDiagram b v n m
   = QD (DUALTree (DownAnnots v n)

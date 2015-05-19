@@ -184,16 +184,48 @@ slideShow = do
         li_ "diagrams-pgf"
         li_ "diagrams-canvas"
         li_ "diagrams-hmlt5"
-  slideImageCode'
-    "A Diagram"
-    Nothing
-    "firstDiagram.svg" 300
-    "firstDiagram.hs" 1 100
-    [ "NoMonoMorphismRestriction important to avoid crazy error messages"
-    , "import a backend, plugable"
-    , "Diagram B - a type alias for 2d diagrams"
-    , "mainWith vs defaultMain"
-    , "not going to show mainWith from here in" ]
+  slide $ do
+    slide' (do
+      h2_ "Sierpinski Triangle"
+      h3_ "Asymptote - vector graphics language"
+      img_ [src_ $ pack (path "sierpinski.png") , width_ "300"]
+      pre_ $ code_ [class_"c", datatrim_ "contenteditable"] $ do
+        "// Draw Sierpinski triangle with top vertex A, side s, and depth q.\n\
+        \void Sierpinski(pair A, real s, int q, bool top=true)\n\
+        \{\n\
+        \  pair B=A-(1,sqrt(2))*s/2;\n\
+        \  pair C=B+s;\n\
+        \  if(top) draw(A--B--C--cycle);\n\
+        \  draw((A+B)/2--(B+C)/2--(A+C)/2--cycle);\n\
+        \  if(q > 0) {\n\
+        \    Sierpinski(A,s/2,q-1,false);\n\
+        \    Sierpinski((A+B)/2,s/2,q-1,false);\n\
+        \    Sierpinski((A+C)/2,s/2,q-1,false);\n\
+        \  }\n\
+        \}\n\
+        \\n\
+        \Sierpinski((0,1),1,5);")
+      [ "calculates coordinates of each vertex"
+      , "and the coordinates of the top of each triangle"
+      , "hard to change the type of triangle, or use different shape"]
+    slideImageCode'
+      "Sierpinski Triangle"
+      (Just "diagrams - EDSL")
+      "sierpinskicircle.svg" 300
+      "Sierpinski.hs" 1 5
+      [ "easy change to pass in a general shape"
+      , "play around, e.g. rotate triangles by amount dependng on n"
+      , "change centerX to alignL, etc"]
+    slideImageCode'
+      "A Diagram"
+      Nothing
+      "firstDiagram.svg" 300
+      "firstDiagram.hs" 1 100
+      [ "NoMonoMorphismRestriction important to avoid crazy error messages"
+      , "import a backend, plugable"
+      , "Diagram B - a type alias for 2d diagrams"
+      , "mainWith vs defaultMain"
+      , "not going to show mainWith from here on in" ]
   slide $ do
     slideImageCode'
       "Composing Diagrams"
@@ -245,7 +277,7 @@ slideShow = do
          li_ "appends"
   slide $ do
     slide $ do
-      h4_ "How do we know where to place diagrams when composing \
+      h3_ "How do we know where to place diagrams when composing \
          \so that they don't overlap?"
       ul_ $ do
         li_ (del_ "Bounding Boxes")
@@ -314,7 +346,8 @@ slideShow = do
       "snug.svg" 300
       "Snug.hs" 6 14
       [ "This cannot be done using align since envelopes prevent overlap"
-      , "same align but uses trace instead of envelope"]
+      , "same align but uses trace instead of envelope"
+      , "you can actually define your own boundry function - Alignable"]
   slide $ do
     slideImage'
       "A 2 Mirror Kaleidoscope"
@@ -336,10 +369,11 @@ slideShow = do
       "Mirror.hs" 19 31
       [ "position :: [(Point v n , a)] -> a"
       , "atPoints :: [Point v n] -> [a] -> a"]
-    slideImage'
+    slideImageCode'
       "Generating The Confetti"
       (Just "seed = 0, pieces = 50")
       "mirror.svg" 400
+      "Mirror.hs" 33 34
       [ "evalRand $ confetti n (mkStdGen 0)"]
     slideCode'
       "Cut out a Triangle"
@@ -374,10 +408,11 @@ slideShow = do
       "The Kaleidoscope"
       (Just "60 degrees, 6 triangles")
       "mirror3.svg" 400
-    slideImage
+    slideImage'
       "The Kaleidoscope"
       (Just "36 degrees, 10 triangles")
       "mirror6.svg" 400
+      [ "A real kaleidoscope has moving confetti"]
   slide $ do
     slideImage'
       "Making GIFs with diagrams"
@@ -393,16 +428,18 @@ slideShow = do
       "stripes.svg" 300
       "Pendulum.hs" 27 33
       [" GIFs have no alpha"
-      , "dont need the black square"]
+      , "dont need the black square"
+      , "make rectangles by scaling squares"]
     slideImageCode
       "Pendulum"
       (Just "The Ball")
       "ball.png" 400
       "Pendulum.hs" 9 12
-    slideCode
+    slideCode'
       "Pendulum"
       Nothing
       "Pendulum.hs" 14 25
+      [ "there are ellipse functions in diagrams"]
     slideCode
       "Pendulum"
       (Just "All together now")
@@ -411,21 +448,21 @@ slideShow = do
       "A 3 Mirror Kaleidoscope"
       Nothing
      "kaleidoscope.gif" 400
-  slide $ do
-    h2_ "TrailLike"
-    code $
-      "class (Metric (V t), OrderedField (N t)) => TrailLike t where\n\
-      \  trailLike :: Located (Trail (V t) (N t)) -> t\n\
-      \\n\
-      \instance (Metric v, OrderedField n) => TrailLike [Point v n] where\n\
-      \  trailLike = trailPoints\n\
-      \\n\
-      \instance (Metric v, OrderedField n) => TrailLike (Path v n) where\n\
-      \  trailLike = Path . (:[])\n\
-      \\n\
-      \instance (TypeableFloat n, Renderable (Path V2 n) b)\n\
-      \    => TrailLike (QDiagram b V2 n Any) where\n\
-      \  trailLike = strokeP . trailLike"
+  -- slide $ do
+  --   h2_ "TrailLike"
+  --   code $
+  --     "class (Metric (V t), OrderedField (N t)) => TrailLike t where\n\
+  --     \  trailLike :: Located (Trail (V t) (N t)) -> t\n\
+  --     \\n\
+  --     \instance (Metric v, OrderedField n) => TrailLike [Point v n] where\n\
+  --     \  trailLike = trailPoints\n\
+  --     \\n\
+  --     \instance (Metric v, OrderedField n) => TrailLike (Path v n) where\n\
+  --     \  trailLike = Path . (:[])\n\
+  --     \\n\
+  --     \instance (TypeableFloat n, Renderable (Path V2 n) b)\n\
+  --     \    => TrailLike (QDiagram b V2 n Any) where\n\
+  --     \  trailLike = strokeP . trailLike"
   slide $ do
     slide $ do
       h1_ "Design Challenge"

@@ -12,13 +12,13 @@ radial = mkRadialGradient (mkStops [(white,0,1), (black,1,1)])
                           GradPad
 
 pend :: V2 Double -> Diagram B
-pend v = bob # translate (e .-. origin) <> rope
+pend v = bob # translate (e .-. origin) <> rod
   where
     ellipsePath :: Diagram B
     ellipsePath = circle 25 # scaleX 1.5
-    bob = scale size $ circle 1 # fillTexture radial # lw none
+    bob  = scale size $ circle 1 # fillTexture radial # lw none
     size = 3.5 * sqrt (2 - y)
-    rope = arrowBetween' (with & shaftStyle %~ lw thick # lc gray
+    rod  = arrowBetween' (with & shaftStyle %~ lw thick # lc gray
                                & arrowHead .~ noHead) s e
     s = (0 ^& 50)
     e = fromMaybe origin (rayTraceP origin v ellipsePath)
