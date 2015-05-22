@@ -118,6 +118,12 @@ headContent = do
   css "css/reveal.css"
   with (css "css/theme/white.css") [id_ "theme"]
   css "lib/css/github.css"
+  script_
+    "var link = document.createElement( 'link' );\
+		\link.rel = 'stylesheet';\
+		\link.type = 'text/css';\
+		\link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';\
+		\document.getElementsByTagName( 'head' )[0].appendChild( link );"
   where
     meta name content = meta_ [name_ name, content_ content]
     css url = link_ [rel_ "stylesheet", href_ url]
@@ -476,6 +482,10 @@ slideShow = do
       \  This means the head needs to be connected to the shaft with a joint."
       , "As we will see, this requires the joint size to depend on the line width."
       , "Shafts can be any curve not just straight lines."]
+    slideImage
+      "Arrow API"
+      Nothing
+      "arrows.svg" 600
     slideImage'
       "Scale Invariance"
       (Just "We usually don't want arrow heads to scale")
@@ -499,13 +509,14 @@ slideShow = do
       [ "So the size of the joint depends on the line width"
       , "Line width is very flexible in diagrams and we don't know it\
       \  at the time the arrow is made."]
-    slideBullets
+    slideBullets'
       "Line Width"
-      (Just "may be scaled:")
-      [ "to absolute size (pixels) "
-      , "to a percentage of diagram size"
+      (Just "Scaling")
+      [ "absolute size (pixels) "
+      , "percentage of diagram size"
       , "locally (like length)"
       , "globally (for backward compatibility)"]
+      [ "The point is we dont know the line width at the time the arrow is constructed"]
     slideCode
       "The Diagram type"
       Nothing
@@ -514,10 +525,10 @@ slideShow = do
       "The Diagram type"
       Nothing
       "QDiagram.hs" 15 28
-    slideImage
-      "Arrow API"
+    slideCode
+      "Simplified Diagram type"
       Nothing
-      "arrows.svg" 600
+      "QDiagram.hs" 30 35
     slideCode
       "Arrow Options"
       (Just "Can't just simply apply a style")

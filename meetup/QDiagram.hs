@@ -26,3 +26,10 @@ data Annotation
   = Href String    -- ^ Hyperlink
   | OpacityGroup Double
   deriving Show
+
+type Diagram = (Envelope, DiagramTree)
+
+data DiagramTree
+  = PrimLeaf
+  | Trans Transformation DiagramTree
+  | Concat [DiagramTree]
