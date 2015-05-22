@@ -101,14 +101,14 @@ confetti n = do
 mkConfetti n = evalRand $ confetti n
 </code></pre><aside class="notes"><ul><li>evalRand $ confetti n (mkStdGen 0)</li></ul></aside></section><section><h2>Cut out a Triangle</h2><pre><code data-trim="contenteditable" class="haskell">isoceles :: (TrailLike t, V t ~ V2) =&gt; Int -&gt; t
 isoceles n = polygon
-  (def &amp; polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
+  (def &amp; polyType   .~ PolySides [a1 @@ turn, a2 @@ turn] [1,1]
        &amp; polyOrient .~ OrientH )
   where
-  deg1 = 1/2 - (1 / fromIntegral n)
-  deg2 = 1/2 - 1/2 * deg1
+  a1 = 1/2 - (1 / fromIntegral n)
+  a2 = 1/2 - 1/2 * a1
 
 mkTriangle :: Int -&gt; Diagram B -&gt; Diagram B
-mkTriangle n = clipped tri # lw none
+mkTriangle n = clipped tri . lw none
   where
   tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
 </code></pre><aside class="notes"><ul><li>A wedge might be better</li><li>TrailLike t</li><li>def and lens</li><li>clipBy - envelope of diagram</li><li>clipTo - envelope is pointwise min</li><li>clipped - envelope of clipping path</li></ul></aside></section><section><h2>The Triangle</h2><img width="400" src="./meetup/mirror2.svg"></section><section><h2>Reflect the Triangle</h2><h3>outlines just for visualization</h3><img width="400" src="./meetup/mirror4.svg"></section><section><h2>Keep reflecting</h2><img width="500" src="./meetup/mirror5.svg"></section><section><h2>The Kaleidoscope</h2><pre><code data-trim="contenteditable" class="haskell">iterateIdx :: Integral i =&gt; (i -&gt; a -&gt; a) -&gt; a -&gt; [a]

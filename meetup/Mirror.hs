@@ -35,14 +35,14 @@ mkConfetti n = evalRand $ confetti n
 
 isoceles :: (TrailLike t, V t ~ V2) => Int -> t
 isoceles n = polygon
-  (def & polyType   .~ PolySides [deg1 @@ turn, deg2 @@ turn] [1,1]
+  (def & polyType   .~ PolySides [a1 @@ turn, a2 @@ turn] [1,1]
        & polyOrient .~ OrientH )
   where
-  deg1 = 1/2 - (1 / fromIntegral n)
-  deg2 = 1/2 - 1/2 * deg1
+  a1 = 1/2 - (1 / fromIntegral n)
+  a2 = 1/2 - 1/2 * a1
 
 mkTriangle :: Int -> Diagram B -> Diagram B
-mkTriangle n = clipped tri # lw none
+mkTriangle n = clipped tri . lw none
   where
   tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
 
