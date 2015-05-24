@@ -189,7 +189,7 @@ slideShow = do
       ul_ $ do
         li_ "diagrams-pgf"
         li_ "diagrams-canvas"
-        li_ "diagrams-hmlt5"
+        li_ "diagrams-html5"
   slide $ do
     slide' (do
       h2_ "Sierpinski Triangle"
@@ -276,7 +276,7 @@ slideShow = do
        h2_ "Moral"
        h4_ "All defined in terms of atop and moveOriginTo"
        ul_ $ do
-         li_ "besde, |||, ==="
+         li_ "beside, |||, ==="
          li_ "cat, hcat, vcat, hsep, vsep"
          li_ "juxtapose"
          li_ "position"
