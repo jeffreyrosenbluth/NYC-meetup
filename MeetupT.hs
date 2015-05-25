@@ -560,7 +560,8 @@ slideShow = do
       (Just "Overview")
       [ "Diagrams are trees built from the leaves up."
       , "Every time two diagrams are composed the combined envelope is cached."
-      , "Attributes like fill color and transforms like scale are stored as internal nodes."]
+      , "Attributes like fill color and transforms like scale are stored as internal nodes."
+      , "The tree is compiled from the top down."]
     slideCode
       "The Diagram type"
       Nothing
@@ -577,10 +578,15 @@ slideShow = do
       "An Example"
       (Just "What needs to happen to render this arrow?")
       "arrowEx1.svg" 500
-      "QDiagram.hs"  42 42
+      "QDiagram.hs"  41 42
       [ "Why cant we just apply scale"
       , "Need to know final stroke width for joint"
       , "Final size for strok width and head length"]
+  slide $ do
+    slideImage
+      "L-Systems"
+      Nothing
+      "lsystem.png" 500
 
 
 main :: IO ()

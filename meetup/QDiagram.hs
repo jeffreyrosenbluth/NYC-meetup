@@ -38,5 +38,5 @@ data QDiaLeaf
   = PrimLeaf
   | DelayedLeaf (Transformation -> n -> n -> DiagramTree )
 
-
+-- pseudo-code
 diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
