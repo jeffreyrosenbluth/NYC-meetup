@@ -96,12 +96,27 @@ slideBullets title subtitle bullets =
     maybe "" h3_ subtitle
     ul_ (mapM_ li_ bullets)
 
+slideList :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> HtmlIO
+slideList title subtitle list =
+  slide $ do
+    h2_ title
+    maybe "" h3_ subtitle
+    ol_ (mapM_ li_ list)
+
 slideBullets' :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> [HtmlIO] -> HtmlIO
 slideBullets' title subtitle bullets notes =
   slide' (do
     h2_ title
     maybe "" h3_ subtitle
     ul_ (mapM_ li_ bullets))
+    notes
+
+slideList' :: HtmlIO -> Maybe HtmlIO -> [HtmlIO] -> [HtmlIO] -> HtmlIO
+slideList' title subtitle list notes =
+  slide' (do
+    h2_ title
+    maybe "" h3_ subtitle
+    ol_ (mapM_ li_ list))
     notes
 
 slideMarkdown :: Text -> HtmlIO
@@ -152,6 +167,51 @@ bodyFooter = do
 slideShow :: HtmlIO
 slideShow = do
   slide $ do
+    h1_ "The diagrams EDSL"
+    h2_ "A declarative vector graphics library"
+  slide $ do
+    slide' (do
+      h2_ "The Asymptote vector graphics language"
+      pre_ $ code_ [class_"c", datatrim_ "contenteditable"] $ do
+        "void aFunction(pair A, real s, int q, bool top=true)\n\
+        \{\n\
+        \  pair B=A-(1,sqrt(2))*s/2;\n\
+        \  pair C=B+s;\n\
+        \  if(top) draw(A--B--C--cycle);\n\
+        \  draw((A+B)/2--(B+C)/2--(A+C)/2--cycle);\n\
+        \  if(q > 0) {\n\
+        \    aFunction(A,s/2,q-1,false);\n\
+        \    aFunction((A+B)/2,s/2,q-1,false);\n\
+        \    aFunction((A+C)/2,s/2,q-1,false);\n\
+        \  }\n\
+        \}\n\
+        \\n\
+        \aFunction((0,1),1,5);")
+      [ "calculates coordinates of each vertex"
+      , "and the coordinates of the top of each triangle"]
+    slideImage'
+      "Sierpinski Triangle"
+      (Just "The Asymptote vector graphics language")
+      "sierpinski.png" 400
+      ["Not modular, inflexible"]
+    slideImageCode'
+      "Sierpinski Triangle"
+      (Just "diagrams EDSL")
+      "sierpinski.svg" 400
+      "Sierpinski.hs" 8 12
+      [ "===, |||, centerX"]
+    slideImageCode'
+      "Sierpinski Triangle"
+      (Just "diagrams EDSL")
+      "sierpinskicircle.svg" 400
+      "SierpinskiCircle.hs" 8 12
+      [ "change triangle to circle"
+      , "remove centerX"]
+    slideCode
+      "Sierpinski Triangle"
+      Nothing
+      "SierpinskiGeneral.hs" 8 12
+  slide $ do
     slideBullets'
       "diagrams"
       (Just "Declarative domain-specific language for creating vector graphics")
@@ -169,7 +229,6 @@ slideShow = do
       (Just "67 Contributors")
       ["Chris Chalmers", "Daniel Bergey", "Jeffrey Rosenbluth", "Ryan Yates", "Brent Yorgey"]
       ["The diagrams team", "see blog post contributors list"]
-  slide $ do
     slideImage'
       "Diagrams 1.3 released"
       (Just "Projections")
@@ -191,37 +250,6 @@ slideShow = do
         li_ "diagrams-canvas"
         li_ "diagrams-html5"
   slide $ do
-    slide' (do
-      h2_ "Sierpinski Triangle"
-      h3_ "Asymptote - vector graphics language"
-      img_ [src_ $ pack (path "sierpinski.png") , width_ "300"]
-      pre_ $ code_ [class_"c", datatrim_ "contenteditable"] $ do
-        "// Draw Sierpinski triangle with top vertex A, side s, and depth q.\n\
-        \void Sierpinski(pair A, real s, int q, bool top=true)\n\
-        \{\n\
-        \  pair B=A-(1,sqrt(2))*s/2;\n\
-        \  pair C=B+s;\n\
-        \  if(top) draw(A--B--C--cycle);\n\
-        \  draw((A+B)/2--(B+C)/2--(A+C)/2--cycle);\n\
-        \  if(q > 0) {\n\
-        \    Sierpinski(A,s/2,q-1,false);\n\
-        \    Sierpinski((A+B)/2,s/2,q-1,false);\n\
-        \    Sierpinski((A+C)/2,s/2,q-1,false);\n\
-        \  }\n\
-        \}\n\
-        \\n\
-        \Sierpinski((0,1),1,5);")
-      [ "calculates coordinates of each vertex"
-      , "and the coordinates of the top of each triangle"
-      , "hard to change the type of triangle, or use different shape"]
-    slideImageCode'
-      "Sierpinski Triangle"
-      (Just "diagrams - EDSL")
-      "sierpinskicircle.svg" 300
-      "Sierpinski.hs" 1 5
-      [ "easy change to pass in a general shape"
-      , "play around, e.g. rotate triangles by amount dependng on n"
-      , "change centerX to alignL, etc"]
     slideImageCode'
       "A Diagram"
       Nothing
@@ -283,8 +311,7 @@ slideShow = do
          li_ "appends"
   slide $ do
     slide $ do
-      h3_ "How do we know where to place diagrams when composing \
-         \so that they don't overlap?"
+      h2_ "How do we know how far to move the origin?"
       ul_ $ do
         li_ (del_ "Bounding Boxes")
         li_ "Envelopes"
@@ -473,50 +500,67 @@ slideShow = do
     slide $ do
       h1_ "Design Challenge"
       h2_ "What's so tricky about arrows?"
-    slideBullets
-      "Arrows"
-      Nothing
-      [ "We usually don't want arrow heads to scale with the diagram."
+    slideList
+      "The Arrow API"
+      (Just "Desired Features")
+      [ "Arrow heads should not scale with the diagram."
       , "Arrows should connect the same points before and after scaling."
-      , "Arrow heads can be translucent - no overlap with the head.\
-      \  This means the head needs to be connected to the shaft with a joint."
-      , "As we will see, this requires the joint size to depend on the line width."
-      , "Shafts can be any curve not just straight lines."]
+      , "Shafts can be any curve not just straight lines."
+      , "Arrow heads can be translucent." ]
     slideImage
-      "Arrow API"
+      "The Arrow API"
       Nothing
       "arrows.svg" 600
+    slideImage
+      "Arrow heads and tails"
+      Nothing
+      "arrowheads.svg" 600
     slideImage'
       "Scale Invariance"
-      (Just "We usually don't want arrow heads to scale")
+      (Just "1. Arrow heads should not scale with the diagram")
       "arrows1.svg" 400
       [ "Don't want head size to change"
       , "Non uniform scaling can cause a preceived rotation"]
     slideImage
       "Scale Invariance"
-      (Just "But then the shaft can end up too small")
+      (Just "2. Arrows should connect the same points before and after scaling")
       "arrows2.svg" 500
     slideImage'
-      "Arrow heads and tails"
-      Nothing
-      "arrowheads.svg" 600
-      [ "If we have an arrow head with a concave back, it will leave a gap\
-        \ when connected to a shaft"]
+      "Shafts"
+      (Just "3. Shafts can be any curve not just straight lines")
+      "arrowshaft.svg" 600
+      [ "arc shaft"]
     slideImage'
-      "This is why we need joints"
-      (Just "The dart arrow head with a fat shaft")
+      "Heads and Tails"
+      (Just "4. Arrow heads can be translucent")
+      "arrowopacity.svg" 600
+      [ "Head cannot overlap shaft"]
+    slideImage'
+      "Heads and Tails"
+      (Just "Therefore we can't overlap the head and the shaft")
       "nojoint.svg" 600
       [ "So the size of the joint depends on the line width"
       , "Line width is very flexible in diagrams and we don't know it\
       \  at the time the arrow is made."]
+    slideList
+      "We have two related problems"
+      (Just "Related because we need to know the final size of the diagram")
+      [ "How to scale arrows"
+      , "Joint size depends on shaft width"]
     slideBullets'
-      "Line Width"
-      (Just "Scaling")
-      [ "absolute size (pixels) "
-      , "percentage of diagram size"
-      , "locally (like length)"
-      , "globally (for backward compatibility)"]
-      [ "The point is we dont know the line width at the time the arrow is constructed"]
+      "Line Width and Arrow Length"
+      (Just "Measurement Units")
+      [ "local - just like argument x to circle x, square x, etc"
+      , "normalized - proportion of final diagram size, e.g 0.1 means 10%"
+      , "output - e.g.pixels"
+      , "global - for backwards compatibility"]
+      [ "Unless type is local, we don't konw line width until it's too late"]
+    slideBullets
+      "The Diagram type"
+      (Just "Overview")
+      [ "Diagrams are trees built from the leaves up."
+      , "Every time two diagrams are composed the combined envelope is cached."
+      , "Attributes like fill color and transforms like scale are stored as internal nodes."]
     slideCode
       "The Diagram type"
       Nothing
@@ -528,11 +572,15 @@ slideShow = do
     slideCode
       "Simplified Diagram type"
       Nothing
-      "QDiagram.hs" 30 35
-    slideCode
-      "Arrow Options"
-      (Just "Can't just simply apply a style")
-      "ArrowOpts.hs" 1 13
+      "QDiagram.hs" 30 39
+    slideImageCode'
+      "An Example"
+      (Just "What needs to happen to render this arrow?")
+      "arrowEx1.svg" 500
+      "QDiagram.hs"  42 42
+      [ "Why cant we just apply scale"
+      , "Need to know final stroke width for joint"
+      , "Final size for strok width and head length"]
 
 
 main :: IO ()

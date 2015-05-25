@@ -38,4 +38,7 @@ diagram = vcat' (with & sep .~ 1.5)
               -- , scalingX (1/2) <> rotation (-1/12 @@ turn)
               ])
 
-main = mainWith $ frame 0.1 diagram
+main = mainWith $ frame 0.1 example1
+
+example1 :: Diagram B
+example1 = draw arrow1 # scale (2/3.45) <> (circle 1 # showOrigin ||| square 2 # showOrigin)

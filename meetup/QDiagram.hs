@@ -30,6 +30,13 @@ data Annotation
 type Diagram = (Envelope, DiagramTree)
 
 data DiagramTree
-  = PrimLeaf
+  = QDiaLeaf
   | Trans Transformation DiagramTree
   | Concat [DiagramTree]
+
+data QDiaLeaf
+  = PrimLeaf
+  | DelayedLeaf (Transformation -> n -> n -> DiagramTree )
+
+
+diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
