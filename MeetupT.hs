@@ -169,6 +169,7 @@ slideShow = do
   slide $ do
     h1_ "The diagrams EDSL"
     h2_ "A declarative vector graphics library"
+    img_ [src_ $ pack (path "gray.svg"), width_ "600"]
   slide $ do
     slide' (do
       h2_ "The Asymptote vector graphics language"
@@ -567,7 +568,7 @@ slideShow = do
       , "Need to know final stroke width for joint"
       , "Final size for stroke width and head length"]
     slideImageCode
-      "The DiagramTree"
+      "The Diagram tree"
       Nothing
       "diagramtree.svg" 500
       "QDiagram.hs"  34 35
