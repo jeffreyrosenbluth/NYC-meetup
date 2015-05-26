@@ -174,31 +174,20 @@ gif = zip dias delays
 main = mainWith $ gif
 </code></pre></section><section><h2>A 3 Mirror Kaleidoscope</h2><img width="400" src="./meetup/kaleidoscope.gif"></section></section><section><section><h1>Design Challenge</h1><h2>What&#39;s so tricky about arrows?</h2></section><section><h2>The Arrow API</h2><h3>Desired Features</h3><ol><li>Arrow heads should not scale with the diagram.</li><li>Arrows should connect the same points before and after scaling.</li><li>Shafts can be any curve not just straight lines.</li><li>Arrow heads can be translucent.</li></ol></section><section><h2>The Arrow API</h2><img width="600" src="./meetup/arrows.svg"></section><section><h2>Arrow heads and tails</h2><img width="600" src="./meetup/arrowheads.svg"></section><section><h2>Scale Invariance</h2><h3>1. Arrow heads should not scale with the diagram</h3><img width="400" src="./meetup/arrows1.svg"><aside class="notes"><ul><li>Don&#39;t want head size to change</li><li>Non uniform scaling can cause a preceived rotation</li></ul></aside></section><section><h2>Scale Invariance</h2><h3>2. Arrows should connect the same points before and after scaling</h3><img width="500" src="./meetup/arrows2.svg"></section><section><h2>Shafts</h2><h3>3. Shafts can be any curve not just straight lines</h3><img width="600" src="./meetup/arrowshaft.svg"><aside class="notes"><ul><li>arc shaft</li></ul></aside></section><section><h2>Heads and Tails</h2><h3>4. Arrow heads can be translucent</h3><img width="600" src="./meetup/arrowopacity.svg"><aside class="notes"><ul><li>Head cannot overlap shaft</li></ul></aside></section><section><h2>Heads and Tails</h2><h3>Therefore we can&#39;t overlap the head and the shaft</h3><img width="600" src="./meetup/nojoint.svg"><aside class="notes"><ul><li>So the size of the joint depends on the line width</li><li>Line width is very flexible in diagrams and we don&#39;t know it  at the time the arrow is made.</li></ul></aside></section><section><h2>We have two related problems</h2><h3>Related because we need to know the final size of the diagram</h3><ol><li>How to scale arrows</li><li>Joint size depends on shaft width</li></ol></section><section><h2>Line Width and Arrow Length</h2><h3>Measurement Units</h3><ul><li>local - just like argument x to circle x, square x, etc</li><li>normalized - proportion of final diagram size, e.g 0.1 means 10%</li><li>output - e.g.pixels</li><li>global - for backwards compatibility</li></ul><aside class="notes"><ul><li>Unless type is local, we don&#39;t konw line width until it&#39;s too late</li></ul></aside></section><section><h2>The Diagram type</h2><h3>Overview</h3><ul><li>Diagrams are trees built from the leaves up.</li><li>Every time two diagrams are composed the combined envelope is cached.</li><li>Attributes like fill color and transforms like scale are stored as internal nodes.</li><li>The tree is compiled from the top down.</li></ul></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type Diagram b = QDiagram b (V b) (N b) Any
 
-newtype QDiagram b v n m
-  = QD (DUALTree (DownAnnots v n)
-                 (UpAnnots b v n m)
-                  Annotation
-                 (QDiaLeaf b v n m) )
-  deriving Typeable
+newtype QDiagram b v n m = QD (DUALTree (DownAnnots v n)
+                              (UpAnnots b v n m)
+                               Annotation
+                              (QDiaLeaf b v n m))
 
-data QDiaLeaf b v n m
-  = PrimLeaf (Prim b v n)
-  | DelayedLeaf (DownAnnots v n -&gt; n -&gt; n -&gt; QDiagram b v n m)
-  deriving Functor
-</code></pre></section><section><h2>The Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type UpAnnots b v n m = Deletable (Envelope v n)
+data QDiaLeaf b v n m = PrimLeaf (Prim b v n)
+                      | DelayedLeaf (DownAnnots v n -&gt; n -&gt; n -&gt; QDiagram b v n m)
+
+type UpAnnots b v n m = Deletable (Envelope v n)
                     ::: Deletable (Trace v n)
                     ::: Deletable (SubMap b v n m)
-                    ::: Query v n m
-                    ::: ()
+                    ::: Query v n m ::: ()
 
-type DownAnnots v n = (Transformation v n :+: Style v n)
-                  ::: Name
-                  ::: ()
-
-data Annotation
-  = Href String    -- ^ Hyperlink
-  | OpacityGroup Double
-  deriving Show
+type DownAnnots v n = (Transformation v n :+: Style v n) ::: Name ::: ()
 </code></pre></section><section><h2>Simplified Diagram type</h2><pre><code data-trim="contenteditable" class="haskell">type Diagram = (Envelope, DiagramTree)
 
 data DiagramTree
@@ -209,9 +198,9 @@ data DiagramTree
 data QDiaLeaf
   = PrimLeaf
   | DelayedLeaf (Transformation -&gt; n -&gt; n -&gt; DiagramTree )
-</code></pre></section><section><h2>An Example</h2><h3>What needs to happen to render this arrow?</h3><img width="500" src="./meetup/arrowEx1.svg"><pre><code data-trim="contenteditable" class="haskell">-- pseudo-code
+</code></pre></section><section><h2>An Example</h2><h3>What needs to happen to render this arrow?</h3><img width="500" src="./meetup/arrowEx1.svg"><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section><section><h2>The DiagramTree</h2><img width="500" src="./meetup/diagramtree.svg"><pre><code data-trim="contenteditable" class="haskell">-- pseudo-code
 diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
-</code></pre><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="400" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="400" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
 sierpinski n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) rules
   where
   rules = M.fromList [ rule &#39;F&#39; &quot;Z&quot;

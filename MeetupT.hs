@@ -554,23 +554,23 @@ slideShow = do
     slideCode
       "The Diagram type"
       Nothing
-      "QDiagram.hs" 1 13
-    slideCode
-      "The Diagram type"
-      Nothing
-      "QDiagram.hs" 15 28
+      "QDiagram.hs" 1 16
     slideCode
       "Simplified Diagram type"
       Nothing
-      "QDiagram.hs" 30 39
-    slideImageCode'
+      "QDiagram.hs" 23 32
+    slideImage'
       "An Example"
       (Just "What needs to happen to render this arrow?")
       "arrowEx1.svg" 500
-      "QDiagram.hs"  41 42
       [ "Why cant we just apply scale"
       , "Need to know final stroke width for joint"
       , "Final size for stroke width and head length"]
+    slideImageCode
+      "The DiagramTree"
+      Nothing
+      "diagramtree.svg" 500
+      "QDiagram.hs"  34 35
   slide $ do
     slideImage
       "L-Systems"
