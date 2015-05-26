@@ -593,12 +593,12 @@ slideShow = do
     slideImageCode
       "L-Systems"
       (Just "Sierpinski triangle")
-      "LSystem_sierpinskiEx.svg" 600
+      "LSystem_sierpinskiEx.svg" 500
       "LSystem.hs" 185 190
     slideImageCode
       "L-Systems"
       (Just "Hexagonal Gosper curve")
-      "LSystem_hexGosperEx.svg" 600
+      "LSystem_hexGosperEx.svg" 500
       "LSystem.hs" 224 229
     slideImageCode
       "L-Systems"
