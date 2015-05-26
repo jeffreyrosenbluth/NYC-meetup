@@ -210,19 +210,8 @@ slideShow = do
     slideCode
       "Sierpinski Triangle"
       Nothing
-      "SierpinskiGeneral.hs" 8 12
+      "SierpinskiGeneral.hs" 8 13
   slide $ do
-    slideBullets'
-      "diagrams"
-      (Just "Declarative domain-specific language for creating vector graphics")
-      [a_ [href_ "http://projects.haskell.org/diagrams/"]
-         "http://projects.haskell.org/diagrams/"
-      ," diagrams-core"
-      , "diagrams-lib"
-      , "diagrams-svg, diagrams-rasterific, ..."
-      , "cabal update && cabal install diagrams"]
-      [ "How many here have used diagrams?"
-      , "website has tutorials, manual, gallery, blog, reference"]
     slide $ img_ [src_ $ pack (path "website.png")]
     slideBullets'
       "5 Active Developers"
@@ -605,22 +594,22 @@ slideShow = do
       "L-Systems"
       (Just "Sierpinski triangle")
       "LSystem_sierpinskiEx.svg" 600
-      "LSystem.hs" 184 189
+      "LSystem.hs" 185 190
     slideImageCode
       "L-Systems"
       (Just "Hexagonal Gosper curve")
       "LSystem_hexGosperEx.svg" 600
-      "LSystem.hs" 223 228
+      "LSystem.hs" 224 229
     slideImageCode
       "L-Systems"
       (Just "A tree")
       "LSystem_tree3Ex.svg" 400
-      "LSystem.hs" 354 357
+      "LSystem.hs" 355 358
     slideImageCode
       "L-Systems"
       (Just "Another tree")
       "LSystem_tree4Ex.svg" 400
-      "LSystem.hs" 365 369
+      "LSystem.hs" 366 370
     slideCode
       "L-Systems"
       (Just "The Language")

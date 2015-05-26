@@ -6,7 +6,8 @@ import Diagrams.Prelude
 import Diagrams.Backend.SVG.CmdLine
 
 sierpinski shape color alignment 1 = shape 1 # fc color
-sierpinski shape color alignment n =    s
+sierpinski shape color alignment n =
+                  s
                  ===
               (s ||| s) # alignment
   where s = sierpinski shape color alignment (n-1)
