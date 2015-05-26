@@ -581,12 +581,62 @@ slideShow = do
       "QDiagram.hs"  41 42
       [ "Why cant we just apply scale"
       , "Need to know final stroke width for joint"
-      , "Final size for strok width and head length"]
+      , "Final size for stroke width and head length"]
   slide $ do
     slideImage
       "L-Systems"
-      Nothing
+      (Just "a.k.a. Lindenmayer Systems")
       "lsystem.png" 500
+    slideBullets
+      "L-System"
+      (Just "A parallel rewriting system - formal grammar")
+      [ "Alphabet"
+      , "Production rules"
+      , "Initial axiom"
+      , "Aristid Lindenmayer - 1968"]
+    slideBullets
+      "L-Systems"
+      (Just "Example - Sierpinski tirangle")
+      [ "Axiom: FX"
+      , "Rule 1: F >> Z"
+      , "Rule 2: X >> +FY-FX-FY+"
+      , "Rule 3: Y >> -FX+FY+FX-" ]
+    slideImageCode
+      "L-Systems"
+      (Just "Sierpinski triangle")
+      "LSystem_sierpinskiEx.svg" 600
+      "LSystem.hs" 184 189
+    slideImageCode
+      "L-Systems"
+      (Just "Hexagonal Gosper curve")
+      "LSystem_hexGosperEx.svg" 600
+      "LSystem.hs" 223 228
+    slideImageCode
+      "L-Systems"
+      (Just "A tree")
+      "LSystem_tree3Ex.svg" 400
+      "LSystem.hs" 354 357
+    slideImageCode
+      "L-Systems"
+      (Just "Another tree")
+      "LSystem_tree4Ex.svg" 400
+      "LSystem.hs" 365 369
+    slideCode
+      "L-Systems"
+      (Just "The Language")
+      "LSystem.hs" 62 76
+    slideCode
+      "L-Systems"
+      (Just "Generating the strings")
+      "LSystem.hs" 92 97
+    slideCode
+      "L-Systems"
+      (Just "The Interpreter")
+      "LSystem.hs" 101 114
+    slideCode
+      "L-Systems"
+      (Just "The Interpreter continued")
+      "LSystem.hs" 115 126
 
 
 main :: IO ()

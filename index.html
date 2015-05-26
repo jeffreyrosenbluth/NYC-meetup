@@ -210,4 +210,72 @@ data QDiaLeaf
   | DelayedLeaf (Transformation -&gt; n -&gt; n -&gt; DiagramTree )
 </code></pre></section><section><h2>An Example</h2><h3>What needs to happen to render this arrow?</h3><img width="500" src="./meetup/arrowEx1.svg"><pre><code data-trim="contenteditable" class="haskell">-- pseudo-code
 diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
-</code></pre><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for strok width and head length</li></ul></aside></section></section><section><section><h2>L-Systems</h2><img width="500" src="./meetup/lsystem.png"></section></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>Reveal.initialize({ controls: true, progress: true, history: true, center: true, transition: 'slide', dependencies: [ { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } }, { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } }, { src: 'plugin/zoom-js/zoom.js', async: true }, { src: 'plugin/notes/notes.js', async: true } ] });</script></body></html>
+</code></pre><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="600" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">--   &lt;&lt;diagrams/src_Diagrams_TwoD_Path_LSystem_sierpinskiEx.svg#diagram=sierpinskiEx&amp;height=400&gt;&gt;
+sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
+sierpinski n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) rules
+  where
+  rules = M.fromList [ rule &#39;F&#39; &quot;Z&quot;
+                     , rule &#39;X&#39; &quot;+FY-FX-FY+&quot;
+</code></pre></section><section><h2>L-Systems</h2><h3>Hexagonal Gosper curve</h3><img width="600" src="./meetup/LSystem_hexGosperEx.svg"><pre><code data-trim="contenteditable" class="haskell">--   &lt;&lt;diagrams/src_Diagrams_TwoD_Path_LSystem_hexGosperEx.svg#diagram=hexGosperEx&amp;height=400&gt;&gt;
+hexGosper :: RealFloat n =&gt; Int -&gt; TurtleState n
+hexGosper n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) hex
+  where
+  hex = M.fromList [ rule &#39;F&#39; &quot;Z&quot;
+                   , rule &#39;X&#39; &quot;FX+FY++FY-FX--FXFX-FY+&quot;
+</code></pre></section><section><h2>L-Systems</h2><h3>A tree</h3><img width="400" src="./meetup/LSystem_tree3Ex.svg"><pre><code data-trim="contenteditable" class="haskell">--   &lt;&lt;diagrams/src_Diagrams_TwoD_Path_LSystem_tree3Ex.svg#diagram=tree3Ex&amp;height=400&gt;&gt;
+tree3 :: RealFloat n =&gt; Int -&gt; TurtleState n
+tree3 n = lSystem n (1/16 @@ turn) (symbols &quot;F&quot;) tree
+  where
+</code></pre></section><section><h2>L-Systems</h2><h3>Another tree</h3><img width="400" src="./meetup/LSystem_tree4Ex.svg"><pre><code data-trim="contenteditable" class="haskell">--   &lt;&lt;diagrams/src_Diagrams_TwoD_Path_LSystem_tree4Ex.svg#diagram=tree4Ex&amp;height=400&gt;&gt;
+tree4 :: RealFloat n =&gt; Int -&gt; TurtleState n
+tree4 n = lSystem n (1/18 @@ turn) (symbols &quot;X&quot;) tree
+  where
+  tree  = M.fromList [ rule &#39;X&#39; &quot;F&gt;&gt;[+X]F&gt;&gt;[-X]+X&quot;
+</code></pre></section><section><h2>L-Systems</h2><h3>The Language</h3><pre><code data-trim="contenteditable" class="haskell">data Symbol n
+  = F        -- &#39;F&#39;
+  | G        -- &#39;f&#39;
+  | Plus     -- &#39;+&#39;
+  | Minus    -- &#39;-&#39;
+  | Reverse  -- &#39;!&#39;
+  | Push     -- &#39;[&#39;
+  | Pop      -- &#39;]&#39;
+  | X Int    -- &#39;X&#39;, &#39;Y&#39;, &#39;Z&#39;
+  | Width n  -- &#39;&lt;&#39;, &#39;&gt;&#39;
+  | Delta n  -- &#39;(&#39;, &#39;)&#39;
+  deriving (Eq, Ord, Show)
+
+-- | Production rules.
+type Rules n = Map (Symbol n) [Symbol n]
+</code></pre></section><section><h2>L-Systems</h2><h3>Generating the strings</h3><pre><code data-trim="contenteditable" class="haskell">-- | Successive generations of the production rules applied to the
+--   starting symbols.
+generations :: Ord n =&gt; Rules n -&gt; [Symbol n] -&gt; [[Symbol n]]
+generations dict syms = iterate (concatMap (produce dict)) syms
+  where
+  produce d s = fromMaybe [s] (M.lookup s d)
+</code></pre></section><section><h2>L-Systems</h2><h3>The Interpreter</h3><pre><code data-trim="contenteditable" class="haskell">lSystemR :: (Floating n, Ord n) =&gt; [Symbol n] -&gt; Reader (Environment n) (TurtleState n)
+lSystemR syms = go startTurtle syms
+  where
+  go turtle []     = return turtle
+  go turtle (x:xs) = case x of
+    F       -&gt; go (forward 1 . penDown $ turtle) xs
+    G       -&gt; go (forward 1 . penUp   $ turtle) xs
+    Plus    -&gt; do
+      env &lt;- ask
+      go (left  (angleInc env ^. deg) turtle) xs
+    Minus   -&gt; do
+      env &lt;- ask
+      go (right (angleInc env ^. deg) turtle) xs
+    Reverse -&gt; go (left 180 turtle) xs
+</code></pre></section><section><h2>L-Systems</h2><h3>The Interpreter continued</h3><pre><code data-trim="contenteditable" class="haskell">-- ...
+    Push    -&gt; local (push (penUp turtle)) (go turtle xs)
+    Pop     -&gt; do
+      env &lt;- ask
+      case turtleStack env of
+        []    -&gt; error &quot;Nothing to pop&quot;
+        (t:_) -&gt; local pop $ go (t { currTrail = currTrail turtle
+                                   , paths = paths turtle}) xs
+    Width w -&gt; go (setPenWidth ((* (1+w)) &lt;$&gt; (penWidth . currPenStyle $ turtle))
+                               turtle) xs
+    Delta d -&gt; local (incAngle (1+d)) (go turtle xs)
+    _       -&gt; go turtle xs
+</code></pre></section></section></div></div><script src="lib/js/head.min.js"></script><script src="js/reveal.js"></script><script>Reveal.initialize({ controls: true, progress: true, history: true, center: true, transition: 'slide', dependencies: [ { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } }, { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }, { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } }, { src: 'plugin/zoom-js/zoom.js', async: true }, { src: 'plugin/notes/notes.js', async: true } ] });</script></body></html>
