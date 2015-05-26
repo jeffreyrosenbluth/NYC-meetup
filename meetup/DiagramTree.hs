@@ -13,7 +13,7 @@ a = circle 1 # named "circle" # showOrigin
 b = square 2 # named "square" # showOrigin
 r = fc black $ rect 2 0.1 ||| (triangle 0.3 # rotateBy (1/12)) # named "arrow"
 c = fc blue . lw none $ square 0.3 # rotateBy (1/8) # named "<>"
-d = fc red . lw none $ square 0.3 # rotateBy (1/8) # named "scale"
+d = fc blue . lw none $ square 0.3 # rotateBy (1/8) # named "scale"
 
 example :: Diagram B
 example = connectOutside' arrow1 "circle" "<>"
