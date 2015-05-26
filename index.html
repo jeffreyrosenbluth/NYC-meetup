@@ -211,23 +211,23 @@ data QDiaLeaf
   | DelayedLeaf (Transformation -&gt; n -&gt; n -&gt; DiagramTree )
 </code></pre></section><section><h2>An Example</h2><h3>What needs to happen to render this arrow?</h3><img width="500" src="./meetup/arrowEx1.svg"><pre><code data-trim="contenteditable" class="haskell">-- pseudo-code
 diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
-</code></pre><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="600" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="400" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
 sierpinski n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) rules
   where
   rules = M.fromList [ rule &#39;F&#39; &quot;Z&quot;
                      , rule &#39;X&#39; &quot;+FY-FX-FY+&quot;
                      , rule &#39;Y&#39; &quot;-FX+FY+FX-&quot; ]
-</code></pre></section><section><h2>L-Systems</h2><h3>Hexagonal Gosper curve</h3><img width="600" src="./meetup/LSystem_hexGosperEx.svg"><pre><code data-trim="contenteditable" class="haskell">hexGosper :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre></section><section><h2>L-Systems</h2><h3>Hexagonal Gosper curve</h3><img width="400" src="./meetup/LSystem_hexGosperEx.svg"><pre><code data-trim="contenteditable" class="haskell">hexGosper :: RealFloat n =&gt; Int -&gt; TurtleState n
 hexGosper n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) hex
   where
   hex = M.fromList [ rule &#39;F&#39; &quot;Z&quot;
                    , rule &#39;X&#39; &quot;FX+FY++FY-FX--FXFX-FY+&quot;
                    , rule &#39;Y&#39; &quot;-FX+FYFY++FY+FX--FX-FY&quot; ]
-</code></pre></section><section><h2>L-Systems</h2><h3>A tree</h3><img width="400" src="./meetup/LSystem_tree3Ex.svg"><pre><code data-trim="contenteditable" class="haskell">tree3 :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre></section><section><h2>L-Systems</h2><h3>A tree</h3><img width="300" src="./meetup/LSystem_tree3Ex.svg"><pre><code data-trim="contenteditable" class="haskell">tree3 :: RealFloat n =&gt; Int -&gt; TurtleState n
 tree3 n = lSystem n (1/16 @@ turn) (symbols &quot;F&quot;) tree
   where
   tree  = M.fromList [rule &#39;F&#39; &quot;FF-[-&gt;F+&gt;F+&gt;F]+[+&gt;F-&gt;F-&gt;F]&quot;]
-</code></pre></section><section><h2>L-Systems</h2><h3>Another tree</h3><img width="400" src="./meetup/LSystem_tree4Ex.svg"><pre><code data-trim="contenteditable" class="haskell">tree4 :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre></section><section><h2>L-Systems</h2><h3>Another tree</h3><img width="200" src="./meetup/LSystem_tree4Ex.svg"><pre><code data-trim="contenteditable" class="haskell">tree4 :: RealFloat n =&gt; Int -&gt; TurtleState n
 tree4 n = lSystem n (1/18 @@ turn) (symbols &quot;X&quot;) tree
   where
   tree  = M.fromList [ rule &#39;X&#39; &quot;F&gt;&gt;[+X]F&gt;&gt;[-X]+X&quot;
