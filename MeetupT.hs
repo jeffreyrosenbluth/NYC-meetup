@@ -637,6 +637,10 @@ slideShow = do
       "L-Systems"
       (Just "The Interpreter continued")
       "LSystem.hs" 115 126
+    slideImage
+      "Questions"
+      (Just "?")
+      "hilbert.svg" 600
 
 
 main :: IO ()
