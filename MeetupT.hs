@@ -457,7 +457,7 @@ slideShow = do
       , "make rectangles by scaling squares"]
     slideImageCode
       "Pendulum"
-      (Just "The Ball")
+      (Just "The Bob")
       "ball.png" 400
       "Pendulum.hs" 9 12
     slideCode'
@@ -586,13 +586,6 @@ slideShow = do
       , "Production rules"
       , "Initial axiom"
       , "Aristid Lindenmayer - 1968"]
-    slideBullets
-      "L-Systems"
-      (Just "Example - Sierpinski tirangle")
-      [ "Axiom: FX"
-      , "Rule 1: F >> Z"
-      , "Rule 2: X >> +FY-FX-FY+"
-      , "Rule 3: Y >> -FX+FY+FX-" ]
     slideImageCode
       "L-Systems"
       (Just "Sierpinski triangle")

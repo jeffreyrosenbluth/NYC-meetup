@@ -141,7 +141,7 @@ stripes = (strutX 32
       ||| stripe
       ||| strutX 30) # center
   where stripe = square 100 # scaleX 0.03 # fc white # lc white
-</code></pre><aside class="notes"><ul><li> GIFs have no alpha</li><li>dont need the black square</li><li>make rectangles by scaling squares</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Ball</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
+</code></pre><aside class="notes"><ul><li> GIFs have no alpha</li><li>dont need the black square</li><li>make rectangles by scaling squares</li></ul></aside></section><section><h2>Pendulum</h2><h3>The Bob</h3><img width="400" src="./meetup/ball.png"><pre><code data-trim="contenteditable" class="haskell">radial :: Texture Double
 radial = mkRadialGradient (mkStops [(white,0,1), (black,1,1)])
                           ((-0.25) ^&amp; (0.25)) 0.1 (0 ^&amp; 0) 1.5
                           GradPad
@@ -200,7 +200,7 @@ data QDiaLeaf
   | DelayedLeaf (Transformation -&gt; n -&gt; n -&gt; DiagramTree )
 </code></pre></section><section><h2>An Example</h2><h3>What needs to happen to render this arrow?</h3><img width="500" src="./meetup/arrowEx1.svg"><aside class="notes"><ul><li>Why cant we just apply scale</li><li>Need to know final stroke width for joint</li><li>Final size for stroke width and head length</li></ul></aside></section><section><h2>The Diagram tree</h2><img width="500" src="./meetup/diagramtree.svg"><pre><code data-trim="contenteditable" class="haskell">-- pseudo-code
 diagram = Trans (scale 500) (Concat [arrow, Concat [circle 1, square 2]])
-</code></pre></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Example - Sierpinski tirangle</h3><ul><li>Axiom: FX</li><li>Rule 1: F &gt;&gt; Z</li><li>Rule 2: X &gt;&gt; +FY-FX-FY+</li><li>Rule 3: Y &gt;&gt; -FX+FY+FX-</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="400" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
+</code></pre></section></section><section><section><h2>L-Systems</h2><h3>a.k.a. Lindenmayer Systems</h3><img width="500" src="./meetup/lsystem.png"></section><section><h2>L-System</h2><h3>A parallel rewriting system - formal grammar</h3><ul><li>Alphabet</li><li>Production rules</li><li>Initial axiom</li><li>Aristid Lindenmayer - 1968</li></ul></section><section><h2>L-Systems</h2><h3>Sierpinski triangle</h3><img width="400" src="./meetup/LSystem_sierpinskiEx.svg"><pre><code data-trim="contenteditable" class="haskell">sierpinski :: RealFloat n =&gt; Int -&gt; TurtleState n
 sierpinski n = lSystem n (60 @@ deg) (symbols &quot;FX&quot;) rules
   where
   rules = M.fromList [ rule &#39;F&#39; &quot;Z&quot;
