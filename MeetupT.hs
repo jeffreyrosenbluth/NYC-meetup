@@ -213,7 +213,9 @@ slideShow = do
       Nothing
       "SierpinskiGeneral.hs" 8 13
   slide $ do
-    slide $ img_ [src_ $ pack (path "website.png")]
+    slide $ do
+      img_ [src_ $ pack (path "website.png")]
+      a_ "http://projects.haskell.org/diagrams/"
     slideBullets'
       "5 Active Developers"
       (Just "67 Contributors")
@@ -291,7 +293,7 @@ slideShow = do
       [ "||| == beside (1,0)"
       , "explain ^&" ]
     slide $ do
-       h2_ "Moral"
+       h2_ "Composing Diagrams"
        h4_ "All defined in terms of atop and moveOriginTo"
        ul_ $ do
          li_ "beside, |||, ==="
@@ -375,7 +377,7 @@ slideShow = do
     slideImage'
       "A 2 Mirror Kaleidoscope"
       Nothing
-      "kaleidoscope_by_mandelfish.jpg" 500
+      "k40_9.svg" 600
       [ "reflected isoceles triangles, 2n-gons"
       , "8-gon, 360 / 8 = 45 degree central anlge"
       , "random confetti in chamber"]

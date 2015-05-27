@@ -12,6 +12,6 @@ sierpinski n =    s
   where s = sierpinski (n-1)
 
 diagram :: Diagram B
-diagram = sierpinski 7
+diagram = sierpinski 6
 
 main = mainWith $ diagram # frame 0.1

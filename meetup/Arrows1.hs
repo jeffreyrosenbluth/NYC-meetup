@@ -30,7 +30,7 @@ showT tr = draw (arrow1 # transform tr)
        ||| draw (arrow2 # transform tr)
 
 diagram :: Diagram B
-diagram = vcat' (with & sep .~ 1.5)
+diagram = square 0.5 # fc white # lw none # translateX 6.5 # translateY (-2) <> vcat' (with & sep .~ 1.5)
             (map (centerX . showT)
               [ scalingX 1
               , scalingX (2)
@@ -38,7 +38,7 @@ diagram = vcat' (with & sep .~ 1.5)
               -- , scalingX (1/2) <> rotation (-1/12 @@ turn)
               ])
 
-main = mainWith $ frame 0.1 example1
+main = mainWith $ frame 0.1 diagram
 
 example1 :: Diagram B
 example1 = draw arrow1 # scale (2/3.45) <> (circle 1 # showOrigin ||| square 2 # showOrigin)

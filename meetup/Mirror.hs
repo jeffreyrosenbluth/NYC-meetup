@@ -70,6 +70,10 @@ diagram3 :: Diagram B
 diagram3 = kaleidoscope d 10
   where d = mkConfetti 50 $ mkStdGen 0
 
+diagram' :: Diagram B
+diagram' = kaleidoscope d 12
+  where d = mkConfetti 40 $ mkStdGen 9
+
 diagram4 :: Diagram B
 diagram4 = k2 d 6
   where d = mkConfetti 50 $ mkStdGen 0
@@ -100,4 +104,4 @@ k3 d n = mconcat . take 3 $ iterateIdx next tri
       where
       tri = isoceles n # rotateBy (-1/4 - 1 / (2 * fromIntegral n))
 
-main = mainWith $ frame 0.1 diagram3
+main = mainWith $ frame 0.1 diagram'
